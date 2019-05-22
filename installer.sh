@@ -49,7 +49,7 @@ if [[ "$installMode" == 1 ]]
 then
     echo
     echo -e "\e[33mOk, so this device is going to be my main unit, my home\e[0m"
-    read -e -p $'\e[33mIn what room are you going to place my main unit? [default]\e[0m' -i 'default' siteId
+    read -e -p $'\e[33mIn what room are you going to place my main unit? \e[0m' -i 'default' siteId
     siteId=${siteId/_/ /.}
     read -p $'\e[33mDo you want me to enable sound playback and record (y/n)? \e[0m' choice
     case "$choice" in
@@ -60,12 +60,12 @@ then
         *)
             enableAudio=1
             echo -e "\e[31mSound enabled\e[0m"
-            read -p $'\e[33mDo you want me to install my audio device (y/n)?\e[0m' choice
+            read -p $'\e[33mDo you want me to install my audio device (y/n)? \e[0m' choice
             case "$choice" in
                 y|Y)
                     echo -e "\e[32mOk, let's do this first\e[0m"
-                    chmod +x ${USERDIR}/ProjectAlice/install/audioInstaller.sh
-                    ./${USERDIR}/ProjectAlice/install/audioInstaller.sh
+                    chmod +x ${USERDIR}/ProjectAlice/installer/audioInstaller.sh
+                    ./${USERDIR}/ProjectAlice/installer/audioInstaller.sh
                     ;;
                 *)
                     echo -e "\e[31mOk, i'll let that to you if needed\e[0m"
@@ -136,6 +136,8 @@ which python3.7 || {
     fi
 }
 
+read -p $'\e[33mIf you want me to use Google ASR and/or Google WaveNet, now is the time for you to upload "googlecredentials.json" and "googlecredentials_wavent.json" into my main directory \e[0m' w
+
 if [[ "$installPython" == "y" ]]; then
     echo -e "\e[33mInstalling Python 3.7... This will take a while...\e[0m"
     apt install -y libffi-dev libbz2-dev liblzma-dev libsqlite3-dev libncurses5-dev libgdbm-dev zlib1g-dev libreadline-dev libssl-dev tk-dev build-essential libncursesw5-dev libc6-dev openssl
@@ -203,12 +205,18 @@ systemctl disable snips-asr
 systemctl enable snips-asr-google
 
 escaped=${USERDIR//\//\\/}
+sed -i -e 's/\#WORKINGDIR/WorkingDirectory='${escaped}'\/ProjectAlice/' /etc/systemd/system/ProjectAlice.service
 sed -i -e 's/\#EXECSTART/ExecStart='${escaped}'\/ProjectAlice\/venv\/bin\/python3.7 main.py/' /etc/systemd/system/ProjectAlice.service
-sed -i -e 's/\#WORKINGDIR/ExecStart='${escaped}'\/ProjectAlice/' /etc/systemd/system/ProjectAlice.service
 sed -i -e 's/\#USER/User='${USER}'/' /etc/systemd/system/ProjectAlice.service
 
 sed -i -e 's/\# assistant = "\/usr\/share\/snips\/assistant"/assistant = "'${escaped}'\/ProjectAlice\/assistant"/' /etc/snips.toml
-sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/googlecredentials.json"/' /etc/snips.toml
+
+noGoogle=1
+if [[ -d "$USERDIR/ProjectAlice/googlecredentials.json" ]]; then
+    noGoogle=0
+    sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/googlecredentials.json"/' /etc/snips.toml
+fi
+
 sed -i -e 's/\# retry_count = 3/retry_count = 0/' /etc/snips.toml
 sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
 sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "amazon", "%%LANG%%", "US", "Joanna", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
@@ -257,6 +265,10 @@ chmod 775 ${USERDIR}/ProjectAlice/cache
 ln -sfn ${USERDIR}/ProjectAlice/assistants/assistant_en ${USERDIR}/ProjectAlice/assistant
 ln -sfn ${USERDIR}/ProjectAlice/assistant/custom_sounds/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
 
+if [[ -d "$USERDIR/ProjectAlice/modules/Customisation/Customisation.py" ]]; then
+    cp ${USERDIR}/ProjectAlice/modules/Customisation/Customisation.sample.py ${USERDIR}/ProjectAlice/modules/Customisation/Customisation.py
+fi
+
 chmod 755 ${USERDIR}/ProjectAlice/shell/langSwitch.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/reboot.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/restart.sh
@@ -284,15 +296,17 @@ unzip awscli-bundle.zip
 ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
 rm awscli-bundle.zip
 
-cd ${USERDIR}
-export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-apt-get update && sudo apt-get install -y google-cloud-sdk
-gcloud init
+if [[ "$noGoogle" -eq 0 ]]; then
+    cd ${USERDIR}
+    export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+    apt-get update && sudo apt-get install -y google-cloud-sdk
+    gcloud init
 
-mkdir -p /var/empty/.config/gcloud
-chown _snips /var/empty/.config/gcloud
+    mkdir -p /var/empty/.config/gcloud
+    chown _snips /var/empty/.config/gcloud
+fi
 
 echo -e "\e[33mNeed some rest...\e[0m"
 sleep 2s
