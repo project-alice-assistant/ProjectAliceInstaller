@@ -37,8 +37,8 @@ case "$choice" in
         ;;
     *)
         installMode=1
-        echo -e "\e[32mMain unit, let me download the required files\e[0m"
-        git clone https://Psychokiller1888@bitbucket.org/Psychokiller1888/project-alice.git
+        echo -e "\e[32mMain unit, ok, let me download the required files\e[0m"
+        git clone https://bitbucket.org/Psychokiller1888/project-alice.git
         rm -rf ${USERDIR}/ProjectAlice
         mv ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
         rm -rf ${USERDIR}/project-alice
@@ -64,8 +64,8 @@ then
             case "$choice" in
                 y|Y)
                     echo -e "\e[32mOk, let's do this first\e[0m"
-                    chmod +x ${USERDIR}/ProjectAlice/installer/audioInstaller.sh
-                    ./${USERDIR}/ProjectAlice/installer/audioInstaller.sh
+                    chmod +x ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
+                    ./${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
                     ;;
                 *)
                     echo -e "\e[31mOk, i'll let that to you if needed\e[0m"
@@ -284,7 +284,7 @@ if [[ "$installSamba" == "y" ]]; then
     apt-get install -y samba-common-bin
 
     rm -f /etc/samba/smb.conf
-    cp ${USERDIR}/ProjectAlice/installer/samba.conf /etc/samba/smb.conf
+    cp ${USERDIR}/ProjectAliceInstaller/samba.conf /etc/samba/smb.conf
 
     smbpasswd -a ${USER}
     /etc/init.d/samba restart

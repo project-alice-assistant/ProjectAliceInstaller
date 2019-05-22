@@ -27,11 +27,11 @@ select device in "respeaker2" "respeaker4" "googleAIY" "matrixvoice" "matrixcrea
             grep -qF 'dtoverlay=googlevoicehat-soundcard' '/boot/config.txt' echo 'dtoverlay=googlevoicehat-soundcard' | tee --append '/boot/config.txt'
             grep -qF 'dtoverlay=pi3-disable-bt-overlay' '/boot/config.txt'  echo 'dtoverlay=pi3-disable-bt-overlay' | tee --append '/boot/config.txt'
             rm -f /etc/asound.conf
-            cp ${USERDIR}/ProjectAlice/installer/asounds/aiy.conf /etc/asound.conf
+            cp ${USERDIR}/ProjectAliceInstaller/asounds/aiy.conf /etc/asound.conf
             ;;
         usbMic)
             rm -f /etc/asound.conf
-            cp ${USERDIR}/ProjectAlice/installer/asounds/usb.conf /etc/asound.conf
+            cp ${USERDIR}/ProjectAliceInstaller/asounds/usb.conf /etc/asound.conf
             ;;
         *) exit;;
     esac
