@@ -26,6 +26,8 @@ apt-get dist-upgrade -y
 apt-get install -y git
 
 cd ${USERDIR}
+
+
 echo
 read -p $'\e[33mIs this device going to be a main unit (y) or a satelitte (n)? \e[0m' choice
 case "$choice" in
@@ -38,8 +40,27 @@ case "$choice" in
     *)
         installMode=1
         echo -e "\e[32mMain unit, ok, let me download the required files\e[0m"
+		
+		if [[ -d "$USERDIR/ProjectAlice" ]]; then
+			echo
+			read -p $'\e[32mI have found existing directories where I should install. Do you want to back them up before I deleted them (y/n)?\e[0m' choice
+			case "$choice" in
+				y|y)
+					echo -e "\e[32mOk, backing them up!\e[0m"
+					today=`date -u`
+					cp ${USERDIR}/ProjectAlice ${USERDIR}/"$today ProjectAliceBackup"
+					cp ${USERDIR}/project-alice ${USERDIR}/"$today project-alice-git-backup"
+					;;
+				*)
+					echo -e "\e[32mGone they are!\e[0m"
+					;;
+			esac
+		fi
+
+		rm -rf ${USERDIR}/ProjectAlice
+		rm -rf ${USERDIR}/project-alice
+
         git clone https://bitbucket.org/Psychokiller1888/project-alice.git
-        rm -rf ${USERDIR}/ProjectAlice
         mv ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
         rm -rf ${USERDIR}/project-alice
         ;;
@@ -65,7 +86,7 @@ then
                 y|Y)
                     echo -e "\e[32mOk, let's do this first\e[0m"
                     chmod +x ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
-                    ./${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
+                    ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
                     ;;
                 *)
                     echo -e "\e[31mOk, i'll let that to you if needed\e[0m"
@@ -77,6 +98,61 @@ fi
 
 installPython="n"
 optimizePython="n"
+installGoogleASR="n"
+installMycroft="n"
+
+read -p $'\e[33mDo you want to use Google ASR when online (y/n) ? \e[0m' choice
+case "$choice" in
+    n|N)
+        installGoogleASR=0
+        echo -e "\e[31mOk, only Snips ASR\e[0m"
+        ;;
+    *)
+        installGoogleASR=1
+        echo -e "\e[32mOk, I will install what's needed\e[0m"
+        ;;
+esac
+
+read -p $'\e[33mFor a better voice you can use online TTS services, do you want to install one (y/n) ? \e[0m' choice
+case "$choice" in
+    y|Y)
+        read -p $'\e[33m(A)mazon Polly, (G)oogle WaveNet or (b)oth of them depending on who talks? \e[0m' choice
+		case "$choice" in
+			g|G)
+				ttsService="google"
+				echo -e "\e[32mGoogle WaveNet, ok!\e[0m"
+				;;
+			a|A)
+				ttsService="amazon"
+				echo -e "\e[32m>Amazon Polly, ok!\e[0m"
+				;;
+			b|B)
+				ttsService="both"
+				echo -e "\e[32m>Both of them, ok!\e[0m"
+				;;
+		esac
+        ;;
+    *)
+        echo -e "\e[31mOk, only offline TTS\e[0m"
+		ttsService="offline"
+        ;;
+esac
+
+
+read -p $'\e[33mMycroft is a nice offline TTS if you want just offline TTS or when you are currently offline. I recommend installing it, the wait is worth the effort (y/n) ? \e[0m' choice
+case "$choice" in
+    n|N)
+        installMycroft=0
+        echo -e "\e[31mOk... PicoTTS it is then...\e[0m"
+        ;;
+    *)
+        installMycroft=1
+        echo -e "\e[32mOk, I will install what's needed\e[0m"
+		if [[ "$ttsService" == "offline" ]]; then
+			ttsService="mycroft"
+		fi
+        ;;
+esac
 
 read -p $'\e[33mSamba is needed for some modules. Do you need to configure it? (y/n)? \e[0m' choice
 case "$choice" in
@@ -96,7 +172,7 @@ FVENV=${USERDIR}'/ProjectAlice/'${VENV}
 which python3.7 || {
     if [[ -d "$FVENV" ]]; then
         echo
-        read -p $'\e[33mVirtual environment detected but Python 3.7 was not detected on your system. Do you need to install Python 3.7 as required (y/n)? \e[0m' choice
+        read -p $'\e[33mVirtual environment found but Python 3.7 was not detected on your system. Do you need to install Python 3.7 as required (y/n)? \e[0m' choice
         case "$choice" in
             y|Y)
                 installPython='y'
@@ -110,7 +186,7 @@ which python3.7 || {
 
         echo
 
-        read -p $'\e[33mDo you want to optimise Python for my hardware? This can take veeeeeeerrryyyyyyy long (y/n)? \e[0m' choice
+        read -p $'\e[33mDo you want to optimize Python for my hardware? This can take veeeeeeerrryyyyyyy long (y/n)? \e[0m' choice
         case "$choice" in
             y|Y)
                 optimizePython='y'
@@ -136,7 +212,9 @@ which python3.7 || {
     fi
 }
 
-read -p $'\e[33mIf you want me to use Google ASR and/or Google WaveNet, now is the time for you to upload "googlecredentials.json" and "googlecredentials_wavent.json" into my main directory \e[0m' w
+if [[ "$installGoogleASR" ]]; then
+	read -p $'\e[33mTime for you to upload "googlecredentials.json" and "googlecredentials_wavenet.json" into my main directory. Press any key when you are done \e[0m' w
+fi
 
 if [[ "$installPython" == "y" ]]; then
     echo -e "\e[33mInstalling Python 3.7... This will take a while...\e[0m"
@@ -189,8 +267,11 @@ apt-get install -y libtool
 apt-get install -y libicu-dev
 apt-get install -y libpcre2-dev
 apt-get install -y libasound2-dev
-apt-get install -y  mosquitto
-apt-get install -y  mosquitto-clients
+apt-get install -y portaudio19-dev
+apt-get install -y python-pyaudio
+apt-get install -y python3-pyaudio
+apt-get install -y mosquitto
+apt-get install -y mosquitto-clients
 
 echo -e "\e[33mSmoking guns...\e[0m"
 sleep 2s
@@ -199,10 +280,13 @@ bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > 
 
 apt-get update
 apt-get install -y snips-platform-voice
-apt-get install -y snips-asr-google
 apt-get install -y snips-watch
-systemctl disable snips-asr
-systemctl enable snips-asr-google
+
+if [[ "$installGoogleASR" ]]
+	apt-get install -y snips-asr-google
+	systemctl disable snips-asr
+	systemctl enable snips-asr-google
+fi
 
 escaped=${USERDIR//\//\\/}
 sed -i -e 's/\#WORKINGDIR/WorkingDirectory='${escaped}'\/ProjectAlice/' /etc/systemd/system/ProjectAlice.service
@@ -211,15 +295,23 @@ sed -i -e 's/\#USER/User='${USER}'/' /etc/systemd/system/ProjectAlice.service
 
 sed -i -e 's/\# assistant = "\/usr\/share\/snips\/assistant"/assistant = "'${escaped}'\/ProjectAlice\/assistant"/' /etc/snips.toml
 
-noGoogle=1
-if [[ -d "$USERDIR/ProjectAlice/googlecredentials.json" ]]; then
-    noGoogle=0
+if [[ -f "$USERDIR/ProjectAlice/googlecredentials.json" ]]; then
     sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/googlecredentials.json"/' /etc/snips.toml
 fi
 
 sed -i -e 's/\# retry_count = 3/retry_count = 0/' /etc/snips.toml
-sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "amazon", "%%LANG%%", "US", "Joanna", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+
+if [[ "$ttsService" == "amazon" ]]; then
+	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
+	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "amazon", "%%LANG%%", "US", "Joanna", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+elif [[ "$ttsService" == "google" ]]; then
+	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
+	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "google", "%%LANG%%", "US", "Wavenet-C", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+elif [[ "$ttsService" == "mycroft" ]]; then
+	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
+	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "mycroft", "%%LANG%%", "--", "slt_hts", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+fi
+
 sed -i -e 's/\# bind = "default@mqtt"/bind = "'${siteId}'@mqtt"/' /etc/snips.toml
 
 if [[ "$enableAudio" -eq 0 ]]; then
@@ -233,6 +325,7 @@ grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --ap
 
 pip3.7 install enum34
 pip3.7 install pyalsaaudio
+pip3.7 install --upgrade pyaudio
 pip3.7 install python-dateutil
 pip3.7 install soco
 pip3.7 install paho-mqtt
@@ -265,7 +358,7 @@ chmod 775 ${USERDIR}/ProjectAlice/cache
 ln -sfn ${USERDIR}/ProjectAlice/assistants/assistant_en ${USERDIR}/ProjectAlice/assistant
 ln -sfn ${USERDIR}/ProjectAlice/assistant/custom_sounds/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
 
-if [[ -d "$USERDIR/ProjectAlice/modules/Customisation/Customisation.py" ]]; then
+if [[ -f "$USERDIR/ProjectAlice/modules/Customisation/Customisation.py" ]]; then
     cp ${USERDIR}/ProjectAlice/modules/Customisation/Customisation.sample.py ${USERDIR}/ProjectAlice/modules/Customisation/Customisation.py
 fi
 
@@ -290,13 +383,15 @@ if [[ "$installSamba" == "y" ]]; then
     /etc/init.d/samba restart
 fi
 
-cd ${USERDIR}
-curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-unzip awscli-bundle.zip
-./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-rm awscli-bundle.zip
+if [[ "$ttsService" == "amazon" || "$ttsService" == "both"]]; then
+	cd ${USERDIR}
+	curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+	unzip awscli-bundle.zip
+	./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+	rm awscli-bundle.zip
+fi
 
-if [[ "$noGoogle" -eq 0 ]]; then
+if [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
     cd ${USERDIR}
     export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
     echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -311,15 +406,17 @@ fi
 echo -e "\e[33mNeed some rest...\e[0m"
 sleep 2s
 
-cd ${USERDIR}
-git clone https://github.com/MycroftAI/mimic.git
-cd mimic
-./dependencies.sh --prefix="/usr/local"
-./autogen.sh
-./configure --prefix="/usr/local"
-make
-/sbin/ldconfig
-make check
+if [[ "$installMycroft" == "y" ]]; then
+	cd ${USERDIR}
+	git clone https://github.com/MycroftAI/mimic.git
+	cd mimic
+	./dependencies.sh --prefix="/usr/local"
+	./autogen.sh
+	./configure --prefix="/usr/local"
+	make
+	/sbin/ldconfig
+	make check
+fi
 
 systemctl daemon-reload
 

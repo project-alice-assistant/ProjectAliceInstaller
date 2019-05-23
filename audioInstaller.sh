@@ -21,6 +21,7 @@ select device in "respeaker2" "respeaker4" "googleAIY" "matrixvoice" "matrixcrea
             ./install.sh
             cd ${USERDIR}
             rm -rf seeed-voicecard
+			break
             ;;
         googleAIY)
             apt-get install -y sox
@@ -28,10 +29,12 @@ select device in "respeaker2" "respeaker4" "googleAIY" "matrixvoice" "matrixcrea
             grep -qF 'dtoverlay=pi3-disable-bt-overlay' '/boot/config.txt'  echo 'dtoverlay=pi3-disable-bt-overlay' | tee --append '/boot/config.txt'
             rm -f /etc/asound.conf
             cp ${USERDIR}/ProjectAliceInstaller/asounds/aiy.conf /etc/asound.conf
+			break
             ;;
         usbMic)
             rm -f /etc/asound.conf
             cp ${USERDIR}/ProjectAliceInstaller/asounds/usb.conf /etc/asound.conf
+			break
             ;;
         *) exit;;
     esac
