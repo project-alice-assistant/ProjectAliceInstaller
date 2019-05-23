@@ -379,7 +379,7 @@ if [[ "$installSamba" == "y" ]]; then
     apt-get install -y samba-common-bin
 
     rm -f /etc/samba/smb.conf
-    cp ${USERDIR}/ProjectAliceInstaller/samba.conf /etc/samba/smb.conf
+    cp ${USERDIR}/ProjectAliceInstaller/samba.sample /etc/samba/smb.conf
 
     smbpasswd -a ${USER}
     /etc/init.d/samba restart
