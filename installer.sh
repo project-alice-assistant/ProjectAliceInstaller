@@ -279,7 +279,7 @@ echo -e "\e[33mSmoking guns...\e[0m"
 sleep 2s
 
 bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list'
-
+apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
 apt-get update
 apt-get install -y snips-platform-voice
 apt-get install -y snips-watch
