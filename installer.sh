@@ -284,7 +284,7 @@ apt-get update
 apt-get install -y snips-platform-voice
 apt-get install -y snips-watch
 
-if [[ "$installGoogleASR" ]]
+if [[ "$installGoogleASR" ]]; then
 	apt-get install -y snips-asr-google
 	systemctl disable snips-asr
 	systemctl enable snips-asr-google
@@ -385,7 +385,7 @@ if [[ "$installSamba" == "y" ]]; then
     /etc/init.d/samba restart
 fi
 
-if [[ "$ttsService" == "amazon" || "$ttsService" == "both"]]; then
+if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
 	cd ${USERDIR}
 	curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
 	unzip awscli-bundle.zip
