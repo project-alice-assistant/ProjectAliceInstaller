@@ -62,6 +62,7 @@ case "$choice" in
 
         git clone https://bitbucket.org/Psychokiller1888/project-alice.git
         mv ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
+		chown -R pi ${USERDIR}/ProjectAlice
         rm -rf ${USERDIR}/project-alice
         ;;
 esac
