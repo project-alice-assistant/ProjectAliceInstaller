@@ -303,7 +303,7 @@ fi
 
 sed -i -e 's/\# retry_count = 3/retry_count = 0/' /etc/snips.toml
 
-if [[ "$ttsService" == "amazon" ]]; then
+if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
 	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
 	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "amazon", "%%LANG%%", "US", "Joanna", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
 elif [[ "$ttsService" == "google" ]]; then
@@ -312,6 +312,9 @@ elif [[ "$ttsService" == "google" ]]; then
 elif [[ "$ttsService" == "mycroft" ]]; then
 	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
 	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "mycroft", "%%LANG%%", "--", "slt_hts", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+else
+	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
+	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "picotts", "%%LANG%%", "--", "--", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
 fi
 
 sed -i -e 's/\# bind = "default@mqtt"/bind = "'${siteId}'@mqtt"/' /etc/snips.toml
@@ -360,7 +363,7 @@ chmod 775 ${USERDIR}/ProjectAlice/cache
 ln -sfn ${USERDIR}/ProjectAlice/assistants/assistant_en ${USERDIR}/ProjectAlice/assistant
 ln -sfn ${USERDIR}/ProjectAlice/assistant/custom_sounds/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
 
-if [[ -f "$USERDIR/ProjectAlice/modules/Customisation/Customisation.py" ]]; then
+if [[ ! -f "$USERDIR/ProjectAlice/modules/Customisation/Customisation.py" ]]; then
     cp ${USERDIR}/ProjectAlice/modules/Customisation/Customisation.sample.py ${USERDIR}/ProjectAlice/modules/Customisation/Customisation.py
 fi
 
