@@ -199,6 +199,7 @@ which python3.7 || {
                 ;;
         esac
     else
+		installPython="y"
         read -p $'\e[33mI need to install Python 3.7! Do you want to optimize it for my hardware? This can take veeeeeeerrryyyyyyy long (y/n)? \e[0m' choice
         case "$choice" in
             y|Y)
