@@ -9,6 +9,8 @@ Yes, but this one has a big advantage: Using Snips for the voice recognition and
 # Who made this?
 The original code was started end 2015 and several rewrite made it what it is today. It was entirely written by me Psycho until this point, where I decided to open it to the world. There's no money asked, no contribution, but as the license states, you should give back what you've been given, share your improvements and addons to the rest of us, in the form of pull requests.
 
+As of may 2019, Jierka joined me to prepare Alice for a public release!
+
 
 # Project Alice, as in "Resident Evil", isn't that scary?
 Ok, yes, I do admit it may sound scary, but you have my word none of you will die down here. I really like the red queen in that movie/game serie and I decided to name the assistant Alice, which lead to my project, Project Alice.
