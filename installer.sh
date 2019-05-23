@@ -143,11 +143,11 @@ esac
 read -p $'\e[33mMycroft is a nice offline TTS if you want just offline TTS or when you are currently offline. I recommend installing it, the wait is worth the effort (y/n) ? \e[0m' choice
 case "$choice" in
     n|N)
-        installMycroft=0
+        installMycroft="n"
         echo -e "\e[31mOk... PicoTTS it is then...\e[0m"
         ;;
     *)
-        installMycroft=1
+        installMycroft="o"
         echo -e "\e[32mOk, I will install what's needed\e[0m"
 		if [[ "$ttsService" == "offline" ]]; then
 			ttsService="mycroft"
