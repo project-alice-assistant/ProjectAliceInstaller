@@ -29,9 +29,9 @@ cd ${USERDIR}
 
 
 echo
-read -p $'\e[33mIs this device going to be a main unit (y) or a satelitte (n)? \e[0m' choice
+read -p $'\e[33mIs this device going to be a (m)ain unit or a (s)atelitte? \e[0m' choice
 case "$choice" in
-    n|N)
+    s|S)
         installMode=2
         echo -e "\e[32mSatellite\e[0m"
         echo -e "\e[31mNot yet implemented!\e[0m"
@@ -43,7 +43,7 @@ case "$choice" in
 		
 		if [[ -d "$USERDIR/ProjectAlice" ]]; then
 			echo
-			read -p $'\e[32mI have found existing directories where I should install. Do you want to back them up before I deleted them (y/n)?\e[0m' choice
+			read -p $'\e[32mI have found existing directories where I should install. Do you want to back them up before I deleted them (y/n)? \e[0m' choice
 			case "$choice" in
 				y|y)
 					echo -e "\e[32mOk, backing them up!\e[0m"
