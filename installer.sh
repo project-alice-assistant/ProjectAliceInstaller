@@ -398,11 +398,11 @@ if [[ "$ttsService" == "offline" ]]; then
 	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
 elif [[ "$ttsService" == "mycroft" ]]; then
 	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
-	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath='${escaped}'\/mimic/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
 elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
-	sed -i -e 's/#export GOOGLE_APPLICATION_CREDENTIALS=%WAVENET_CREDENTIALS/export GOOGLE_APPLICATION_CREDENTIALS='${escaped}'\/ProjectAlice\/googlecredentials_wavenet.json/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#export GOOGLE_APPLICATION_CREDENTIALS=%WAVENET_CREDENTIALS/export GOOGLE_APPLICATION_CREDENTIALS="'${escaped}'\/ProjectAlice\/googlecredentials_wavenet.json"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
 fi
-sed -i -e 's/cache=%CACHE_PATH%/cache='${escaped}'\/ProjectAlice\/cache/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
 
 pip3.7 install enum34
 pip3.7 install pyalsaaudio
@@ -466,9 +466,9 @@ fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
 sed -i -e 's/\# disable_playback = false/disable_playback = true/' /etc/snips.toml
-	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID='${awsAccessKey}'/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
-	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY'${awsSecretKey}'/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
-	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION='${AWS_API_SERVER}'/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${AWS_API_SERVER}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
 	sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
 
 	cd ${USERDIR}
