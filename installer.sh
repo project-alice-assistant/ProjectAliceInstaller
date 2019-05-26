@@ -27,7 +27,6 @@ apt-get install -y git
 
 cd ${USERDIR}
 
-
 echo
 read -p $'\e[33mIs this device going to be a (m)ain unit or a (s)atelitte? \e[0m' choice
 case "$choice" in
@@ -126,6 +125,73 @@ case "$choice" in
 			a|A)
 				ttsService="amazon"
 				echo -e "\e[32m>Amazon Polly, ok!\e[0m"
+				read -p $'\e[33mI need your AWS access key to configure the TTS\e[0m' awsAccessKey
+				read -p $'\e[33mAnd your AWS secret key... Please?\e[0m' awsSecretKey
+				echo -e "\e[33mI need you to select the correct AWS API Gateway\e[0m"
+				select region in "East USA (Ohio)" "East USA (North Virginia)" "West USA (North California)" "West USA (Oregon)" "Asia Pacific (Hong Kong)" "Asia Pacific (Mumbai)" "Asia Pacific (Seoul)" "Asia Pacific (Singapour)" "Asia Pacific (Sydney)" "Asia Pacific (Tokyo)" "Canada (center)" "China (Beijing)" "China (Ningxia)" "EU (Francfort)" "EU (Irlande)" "EU (London)" "EU (Paris)" "EU (Stockholm)" "South America (Sao Paulo)"; do
+				case ${region} in
+					"East USA (Ohio)")
+						awsAPIGateway="us-east-2"
+						;;
+					"East USA (North Virginia)")
+						awsAPIGateway="us-east-1"
+						;;
+					"West USA (North California)")
+						awsAPIGateway="us-west-1"
+						;;
+					"West USA (Oregon)")
+						awsAPIGateway="us-west-2"
+						;;
+					"Asia Pacific (Hong Kong)")
+						awsAPIGateway="ap-east-1"
+						;;
+					"Asia Pacific (Mumbai)")
+						awsAPIGateway="ap-south-1"
+						;;
+					"Asia Pacific (Seoul)")
+						awsAPIGateway="ap-northeast-2"
+						;;
+					"Asia Pacific (Singapour)")
+						awsAPIGateway="ap-southeast-1"
+						;;
+					"Asia Pacific (Sydney)")
+						awsAPIGateway="ap-southeast-2"
+						;;
+					"Asia Pacific (Tokyo)")
+						awsAPIGateway="ap-northeast-1"
+						;;
+					"Canada (center)")
+						awsAPIGateway="ca-central-1"
+						;;
+					"China (Beijing)")
+						awsAPIGateway="cn-north-1"
+						;;
+					"China (Ningxia)")
+						awsAPIGateway="cn-northwest-1"
+						;;
+					"EU (Francfort)")
+						awsAPIGateway="eu-central-1"
+						;;
+					"EU (Irlande)")
+						awsAPIGateway="eu-west-1"
+						;;
+					"EU (London)")
+						awsAPIGateway="eu-west-2"
+						;;
+					"EU (Paris)")
+						awsAPIGateway="eu-west-3"
+						;;
+					"EU (Stockholm)")
+						awsAPIGateway="eu-north-1"
+						;;
+					"South America (Sao Paulo)")
+						awsAPIGateway="sa-east-1"
+						;;
+					*)
+						echo -e "\e[32mInvalid choice, falling back to eu-west-3\e[0m"
+						awsAPIGateway="eu-west-3"
+						;;
+				esac
 				;;
 			b|B)
 				ttsService="both"
@@ -328,6 +394,16 @@ grep -qF 'dtparam=i2c_arm=on' '/boot/config.txt' || echo 'dtparam=i2c_arm=on' | 
 grep -qF 'i2c-dev' '/etc/modules' || echo 'i2c-dev' | tee --append '/etc/modules'
 grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --append '/boot/config.txt'
 
+if [[ "$ttsService" == "offline" ]]; then
+	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+elif [[ "$ttsService" == "mycroft" ]]; then
+	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath='${escaped}'\/mimic/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
+	sed -i -e 's/#export GOOGLE_APPLICATION_CREDENTIALS=%WAVENET_CREDENTIALS/export GOOGLE_APPLICATION_CREDENTIALS='${escaped}'\/ProjectAlice\/googlecredentials_wavenet.json/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+fi
+sed -i -e 's/cache=%CACHE_PATH%/cache='${escaped}'\/ProjectAlice\/cache/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+
 pip3.7 install enum34
 pip3.7 install pyalsaaudio
 pip3.7 install --upgrade pyaudio
@@ -389,6 +465,12 @@ if [[ "$installSamba" == "y" ]]; then
 fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
+sed -i -e 's/\# disable_playback = false/disable_playback = true/' /etc/snips.toml
+	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID='${awsAccessKey}'/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY'${awsSecretKey}'/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION='${AWS_API_SERVER}'/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+
 	cd ${USERDIR}
 	curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
 	unzip awscli-bundle.zip
