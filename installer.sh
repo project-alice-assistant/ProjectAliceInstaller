@@ -42,27 +42,41 @@ case "$choice" in
 		
 		if [[ -d "$USERDIR/ProjectAlice" ]]; then
 			echo
-			read -p $'\e[32mI have found existing directories where I should install. Do you want to back them up before I deleted them (y/n)? \e[0m' choice
+			read -p $'\e[32mI have found existing directories where I should install. Shall I make a backup (y/n)? \e[0m' choice
 			case "$choice" in
-				y|y)
+				y|Y)
 					echo -e "\e[32mOk, backing them up!\e[0m"
 					today=`date -u`
 					cp ${USERDIR}/ProjectAlice ${USERDIR}/"$today ProjectAliceBackup"
-					cp ${USERDIR}/project-alice ${USERDIR}/"$today project-alice-git-backup"
 					;;
 				*)
 					echo -e "\e[32mGone they are!\e[0m"
 					;;
 			esac
+			read -p $'\e[32mI have found existing directories where I should install. Do you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
+			case "$choice" in
+				i|I)
+					echo -e "\eGetting rid of the deamons of the past!\e[0m"
+					rm -rf ${USERDIR}/ProjectAlice
+					;;
+				*)
+					echo -e "\eOk, let's try to update!\e[0m"
+					;;
+			esac
+		fi
+		
+		if [[ ! -d "$USERDIR/project-alice" ]]; then
+			mkdir ${USERDIR}/project-alice
+			cd ${USERDIR}/project-alice
+			git init
+			git remote add origin -f https://bitbucket.org/Psychokiller1888/project-alice.git
+		else
+			cd ${USERDIR}/project-alice
+			git pull
 		fi
 
-		rm -rf ${USERDIR}/ProjectAlice
-		rm -rf ${USERDIR}/project-alice
-
-        git clone https://bitbucket.org/Psychokiller1888/project-alice.git
-        mv ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
+		cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
 		chown -R pi ${USERDIR}/ProjectAlice
-        rm -rf ${USERDIR}/project-alice
         ;;
 esac
 
@@ -192,6 +206,7 @@ case "$choice" in
 						awsAPIGateway="eu-west-3"
 						;;
 				esac
+				done
 				;;
 			b|B)
 				ttsService="both"
