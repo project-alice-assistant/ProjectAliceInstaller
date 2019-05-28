@@ -339,22 +339,7 @@ fi
 
 cp ${USERDIR}/ProjectAlice/ProjectAlice.service /etc/systemd/system
 
-apt-get install -y mpg123
-apt-get install -y dirmngr
-apt-get install -y python3-pip
-apt-get install -y gcc
-apt-get install -y make
-apt-get install -y pkg-config
-apt-get install -y automake
-apt-get install -y libtool
-apt-get install -y libicu-dev
-apt-get install -y libpcre2-dev
-apt-get install -y libasound2-dev
-apt-get install -y portaudio19-dev
-apt-get install -y python-pyaudio
-apt-get install -y python3-pyaudio
-apt-get install -y mosquitto
-apt-get install -y mosquitto-clients
+apt-get install -y mpg123 dirmngr python3-pip gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev
 
 echo -e "\e[33mSmoking guns...\e[0m"
 sleep 2s
