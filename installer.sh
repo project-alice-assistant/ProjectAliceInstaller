@@ -367,6 +367,10 @@ if [[ -f "$USERDIR/ProjectAlice/googlecredentials.json" ]]; then
     sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/googlecredentials.json"/' /etc/snips.toml
 fi
 
+if [[ ! -f "$USERDIR/ProjectAlice/shell/snipsSuperTTS.sh" ]]; then
+    cp ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sample.sh ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+fi
+
 sed -i -e 's/\# retry_count = 3/retry_count = 0/' /etc/snips.toml
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
