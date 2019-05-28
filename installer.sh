@@ -404,26 +404,7 @@ elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
 fi
 sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
 
-pip3.7 install enum34
-pip3.7 install pyalsaaudio
-pip3.7 install --upgrade pyaudio
-pip3.7 install python-dateutil
-pip3.7 install soco
-pip3.7 install paho-mqtt
-pip3.7 install watchdog
-pip3.7 install toml
-pip3.7 install requests
-pip3.7 install requests-jwt
-pip3.7 install spidev
-pip3.7 install gpiozero
-pip3.7 install Adafruit_MCP9808
-pip3.7 install py-translator
-pip3.7 install BeautifulSoup4
-pip3.7 install langdetect
-pip3.7 install slugify
-pip3.7 install wikipedia
-pip3.7 install google-api-python-client
-pip3.7 install oauth2client
+pip3.7 install -r requirements.txt
 
 echo -e "\e[33mCatching breath...\e[0m"
 sleep 2s
