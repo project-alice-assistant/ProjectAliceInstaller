@@ -424,10 +424,6 @@ chmod 775 ${USERDIR}/ProjectAlice/cache
 ln -sfn ${USERDIR}/ProjectAlice/assistants/assistant_en ${USERDIR}/ProjectAlice/assistant
 ln -sfn ${USERDIR}/ProjectAlice/assistant/custom_sounds/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
 
-if [[ ! -f "$USERDIR/ProjectAlice/modules/Customisation/Customisation.py" ]]; then
-    cp ${USERDIR}/ProjectAlice/modules/Customisation/Customisation.sample.py ${USERDIR}/ProjectAlice/modules/Customisation/Customisation.py
-fi
-
 chmod 755 ${USERDIR}/ProjectAlice/shell/langSwitch.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/reboot.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/restart.sh
