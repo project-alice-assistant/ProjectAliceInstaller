@@ -56,7 +56,7 @@ case "$choice" in
 			read -p $'\e[32mI have found existing directories where I should install. Do you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
 			case "$choice" in
 				i|I)
-					echo -e "\eGetting rid of the deamons of the past!\e[0m"
+					echo -e "\eGetting rid of the demons of the past!\e[0m"
 					rm -rf ${USERDIR}/ProjectAlice
 					;;
 				*)
@@ -118,11 +118,10 @@ installMycroft="n"
 read -p $'\e[33mDo you want to use Google ASR when online (y/n) ? \e[0m' choice
 case "$choice" in
     n|N)
-        installGoogleASR=0
         echo -e "\e[31mOk, only Snips ASR\e[0m"
         ;;
     *)
-        installGoogleASR=1
+        installGoogleASR="y"
         echo -e "\e[32mOk, I will install what's needed\e[0m"
         ;;
 esac
@@ -295,7 +294,7 @@ which python3.7 || {
     fi
 }
 
-if [[ "$installGoogleASR" ]]; then
+if [[ "$installGoogleASR" == "y" ]]; then
 	read -p $'\e[33mTime for you to upload "googlecredentials.json" and "googlecredentials_wavenet.json" into my main directory. Press any key when you are done \e[0m' w
 fi
 
@@ -350,7 +349,7 @@ apt-get update
 apt-get install -y snips-platform-voice
 apt-get install -y snips-watch
 
-if [[ "$installGoogleASR" ]]; then
+if [[ "$installGoogleASR" == "y" ]]; then
 	apt-get install -y snips-asr-google
 	systemctl disable snips-asr
 	systemctl enable snips-asr-google
