@@ -398,14 +398,14 @@ grep -qF 'i2c-dev' '/etc/modules' || echo 'i2c-dev' | tee --append '/etc/modules
 grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --append '/boot/config.txt'
 
 if [[ "$ttsService" == "offline" ]]; then
-	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 elif [[ "$ttsService" == "mycroft" ]]; then
-	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
-	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
-	sed -i -e 's/#export GOOGLE_APPLICATION_CREDENTIALS=%WAVENET_CREDENTIALS/export GOOGLE_APPLICATION_CREDENTIALS="'${escaped}'\/ProjectAlice\/googlecredentials_wavenet.json"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#export GOOGLE_APPLICATION_CREDENTIALS=%WAVENET_CREDENTIALS/export GOOGLE_APPLICATION_CREDENTIALS="'${escaped}'\/ProjectAlice\/googlecredentials_wavenet.json"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 fi
-sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 
 pip3.7 install -r requirements.txt
 
@@ -446,10 +446,10 @@ fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
 sed -i -e 's/\# disable_playback = false/disable_playback = true/' /etc/snips.toml
-	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
-	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
-	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${AWS_API_SERVER}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
-	sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS
+	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${AWS_API_SERVER}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 
 	cd ${USERDIR}
 	curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
