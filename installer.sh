@@ -136,66 +136,66 @@ case "$choice" in
 				;;
 			a|A|b|B)
 				ttsService="amazon"
-				read -p $'\e[33mI need your AWS access key to configure the TTS\e[0m' awsAccessKey
-				read -p $'\e[33mAnd your AWS secret key... Please?\e[0m' awsSecretKey
+				read -p $'\e[33mI need your AWS access key to configure the TTS: \e[0m' awsAccessKey
+				read -p $'\e[33mAnd your AWS secret key... Please? \e[0m' awsSecretKey
 				echo -e "\e[33mI need you to select the correct AWS API Gateway\e[0m"
 				select region in "East USA (Ohio)" "East USA (North Virginia)" "West USA (North California)" "West USA (Oregon)" "Asia Pacific (Hong Kong)" "Asia Pacific (Mumbai)" "Asia Pacific (Seoul)" "Asia Pacific (Singapour)" "Asia Pacific (Sydney)" "Asia Pacific (Tokyo)" "Canada (center)" "China (Beijing)" "China (Ningxia)" "EU (Francfort)" "EU (Irlande)" "EU (London)" "EU (Paris)" "EU (Stockholm)" "South America (Sao Paulo)"; do
 				case ${region} in
-					"East USA (Ohio)")
+					1)
 						awsAPIGateway="us-east-2"
 						;;
-					"East USA (North Virginia)")
+					2)
 						awsAPIGateway="us-east-1"
 						;;
-					"West USA (North California)")
+					3)
 						awsAPIGateway="us-west-1"
 						;;
-					"West USA (Oregon)")
+					4)
 						awsAPIGateway="us-west-2"
 						;;
-					"Asia Pacific (Hong Kong)")
+					5)
 						awsAPIGateway="ap-east-1"
 						;;
-					"Asia Pacific (Mumbai)")
+					6)
 						awsAPIGateway="ap-south-1"
 						;;
-					"Asia Pacific (Seoul)")
+					7)
 						awsAPIGateway="ap-northeast-2"
 						;;
-					"Asia Pacific (Singapour)")
+					8)
 						awsAPIGateway="ap-southeast-1"
 						;;
-					"Asia Pacific (Sydney)")
+					9)
 						awsAPIGateway="ap-southeast-2"
 						;;
-					"Asia Pacific (Tokyo)")
+					10)
 						awsAPIGateway="ap-northeast-1"
 						;;
-					"Canada (center)")
+					11)
 						awsAPIGateway="ca-central-1"
 						;;
-					"China (Beijing)")
+					12)
 						awsAPIGateway="cn-north-1"
 						;;
-					"China (Ningxia)")
+					13)
 						awsAPIGateway="cn-northwest-1"
 						;;
-					"EU (Francfort)")
+					14)
 						awsAPIGateway="eu-central-1"
 						;;
-					"EU (Irlande)")
+					15)
 						awsAPIGateway="eu-west-1"
 						;;
-					"EU (London)")
+					16)
 						awsAPIGateway="eu-west-2"
 						;;
-					"EU (Paris)")
+					17)
 						awsAPIGateway="eu-west-3"
 						;;
-					"EU (Stockholm)")
+					18)
 						awsAPIGateway="eu-north-1"
 						;;
-					"South America (Sao Paulo)")
+					19)
 						awsAPIGateway="sa-east-1"
 						;;
 					*)
@@ -203,7 +203,6 @@ case "$choice" in
 						awsAPIGateway="eu-west-3"
 						;;
 				esac
-				done
 				;;
 		esac
         ;;
