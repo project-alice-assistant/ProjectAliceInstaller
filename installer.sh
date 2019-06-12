@@ -66,15 +66,14 @@ case "$choice" in
 		fi
 		
 		if [[ ! -d "$USERDIR/project-alice" ]]; then
-			mkdir ${USERDIR}/project-alice
-			cd ${USERDIR}/project-alice
-			git init
-			git remote add origin -f https://bitbucket.org/Psychokiller1888/project-alice.git
+			git clone https://bitbucket.org/Psychokiller1888/project-alice.git
 		else
 			cd ${USERDIR}/project-alice
+			git stash
+			git pull
+			git stash apply
 		fi
 		
-		git pull
 		cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
 		chown -R pi ${USERDIR}/ProjectAlice
         ;;
