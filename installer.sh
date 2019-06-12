@@ -141,7 +141,7 @@ case "$choice" in
 				echo -e "\e[33mI need you to select the correct AWS API Gateway\e[0m"
 				select region in "East USA (Ohio)" "East USA (North Virginia)" "West USA (North California)" "West USA (Oregon)" "Asia Pacific (Hong Kong)" "Asia Pacific (Mumbai)" "Asia Pacific (Seoul)" "Asia Pacific (Singapour)" "Asia Pacific (Sydney)" "Asia Pacific (Tokyo)" "Canada (center)" "China (Beijing)" "China (Ningxia)" "EU (Francfort)" "EU (Irlande)" "EU (London)" "EU (Paris)" "EU (Stockholm)" "South America (Sao Paulo)";
 				do
-					case "$REGION" in
+					case "$region" in
 						1 ) awsAPIGateway="us-east-2";;
 						2 ) awsAPIGateway="us-east-1";;
 						3 ) awsAPIGateway="us-west-1";;
