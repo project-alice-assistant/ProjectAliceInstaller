@@ -231,6 +231,19 @@ case "$choice" in
         ;;
 esac
 
+read -p $'\e[33mPulseaudio can significantly improve the audio quality, do you want to install it (y/n)? \e[0m' choice
+case "$choice" in
+    y|Y)
+        installPulseAudio='y'
+        echo -e "\e[32myes\e[0m"
+        ;;
+    *)
+        installPulseAudio='n'
+        echo -e "\e[31mno\e[0m"
+        read -p $'\e[33mOk! No problem!\e[0m'
+        ;;
+esac
+
 FVENV=${USERDIR}'/ProjectAlice/'${VENV}
 
 which python3.7 || {
@@ -336,31 +349,32 @@ if [[ "$installGoogleASR" == "y" ]]; then
 	systemctl enable snips-asr-google
 fi
 
-echo -e "\e[33mInstalling Pulseaudio\e[0m"
-apt-get install -y pulseaudio
+if [[ "installPulseAudio" == "y" ]]; then
+	echo -e "\e[33mInstalling Pulseaudio\e[0m"
+	apt-get install -y pulseaudio
 
-if [[ -f /etc/systemd/system/pulseaudio.service ]]; then
-    rm /etc/systemd/system/pulseaudio.service
+	if [[ -f /etc/systemd/system/pulseaudio.service ]]; then
+		rm /etc/systemd/system/pulseaudio.service
+	fi
+
+	cp ${USERDIR}/ProjectAliceInstaller/pulseaudio.sample /etc/systemd/system/pulseaudio.service
+	systemctl --global disable pulseaudio.service pulseaudio.socket
+	systemctl enable pulseaudio
+	systemctl start pulseaudio
+	usermod -G pulse-access -a pi
+	usermod -G pulse-access -a _snips
+
+	sudo -u ${USER} pactl list short sinks
+	read -p $'\e[32mPlease type the index number of your default audio output \e[0m' output
+	sudo -u ${USER} pactl set-default-sink ${output}
+
+	sudo -u ${USER} pactl list short sources
+	read -p $'\e[32mPlease type the index number of your default audio input \e[0m' input
+	sudo -u ${USER} pactl set-default-source ${input}
+
+	sed -i -e 's/; default-fragments = 4/default-fragments = 5/' /etc/pulse/daemon.conf
+	sed -i -e 's/; default-fragments-size-msec = 25/default-fragments-size-msec = 2/' /etc/pulse/daemon.conf
 fi
-
-cp ${USERDIR}/ProjectAliceInstaller/pulseaudio.sample /etc/systemd/system/pulseaudio.service
-systemctl --global disable pulseaudio.service pulseaudio.socket
-systemctl enable pulseaudio
-systemctl start pulseaudio
-usermod -G pulse-access -a pi
-usermod -G pulse-access -a _snips
-
-sudo -u ${USER} pactl list short sinks
-read -p $'\e[32mPlease type the index number of your default audio output \e[0m' output
-sudo -u ${USER} pactl set-default-sink ${output}
-
-sudo -u ${USER} pactl list short sources
-read -p $'\e[32mPlease type the index number of your default audio input \e[0m' input
-sudo -u ${USER} pactl set-default-source ${input}
-
-sed -i -e 's/; default-fragments = 4/default-fragments = 5/' /etc/pulse/daemon.conf
-sed -i -e 's/; default-fragments-size-msec = 25/default-fragments-size-msec = 2/' /etc/pulse/daemon.conf
-
 
 escaped=${USERDIR//\//\\/}
 sed -i -e 's/\#WORKINGDIR/WorkingDirectory='${escaped}'\/ProjectAlice/' /etc/systemd/system/ProjectAlice.service
