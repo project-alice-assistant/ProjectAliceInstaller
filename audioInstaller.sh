@@ -27,6 +27,7 @@ select device in "respeaker2" "respeaker4" "googleAIY" "matrixvoice" "matrixcrea
             apt-get install -y sox
             grep -qF 'dtoverlay=googlevoicehat-soundcard' '/boot/config.txt' echo 'dtoverlay=googlevoicehat-soundcard' | tee --append '/boot/config.txt'
             grep -qF 'dtoverlay=pi3-disable-bt-overlay' '/boot/config.txt'  echo 'dtoverlay=pi3-disable-bt-overlay' | tee --append '/boot/config.txt'
+			sed -i -e 's/\dtparam=audio=on = #dtparam=audio=on/' /boot/config.txt
             rm -f /etc/asound.conf
             cp ${USERDIR}/ProjectAliceInstaller/asounds/aiy.conf /etc/asound.conf
 			break

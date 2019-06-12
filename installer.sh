@@ -301,6 +301,7 @@ fi
 if [[ "$installPython" == "y" ]]; then
     echo -e "\e[33mInstalling Python 3.7... This will take a while...\e[0m"
     apt install -y libffi-dev libbz2-dev liblzma-dev libsqlite3-dev libncurses5-dev libgdbm-dev zlib1g-dev libreadline-dev libssl-dev tk-dev build-essential libncursesw5-dev libc6-dev openssl
+	cd ${USERDIR}
     sudo -u ${USER} wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
     sudo -u ${USER} tar xf Python-3.7.3.tar.xz
     cd Python-3.7.3
@@ -346,8 +347,8 @@ sleep 2s
 bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list'
 apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
 apt-get update
-apt-get install -y snips-platform-voice
-apt-get install -y snips-watch
+apt-get install -y --allow-unauthenticated snips-platform-voice
+apt-get install -y --allow-unauthenticated snips-watch
 
 if [[ "$installGoogleASR" == "y" ]]; then
 	apt-get install -y snips-asr-google
