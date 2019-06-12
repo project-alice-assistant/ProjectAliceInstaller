@@ -53,7 +53,7 @@ case "$choice" in
 					echo -e "\e[32mGone they are!\e[0m"
 					;;
 			esac
-			read -p $'\e[32mI have found existing directories where I should install. Do you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
+			read -p $'\e[32mDo you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
 			case "$choice" in
 				i|I)
 					echo -e "\eGetting rid of the demons of the past!\e[0m"
