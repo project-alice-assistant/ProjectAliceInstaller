@@ -134,75 +134,36 @@ case "$choice" in
 				ttsService="google"
 				echo -e "\e[32mGoogle WaveNet, ok!\e[0m"
 				;;
-			a|A|b|B)
+			*)
 				ttsService="amazon"
 				read -p $'\e[33mI need your AWS access key to configure the TTS: \e[0m' awsAccessKey
 				read -p $'\e[33mAnd your AWS secret key... Please? \e[0m' awsSecretKey
 				echo -e "\e[33mI need you to select the correct AWS API Gateway\e[0m"
 				select region in "East USA (Ohio)" "East USA (North Virginia)" "West USA (North California)" "West USA (Oregon)" "Asia Pacific (Hong Kong)" "Asia Pacific (Mumbai)" "Asia Pacific (Seoul)" "Asia Pacific (Singapour)" "Asia Pacific (Sydney)" "Asia Pacific (Tokyo)" "Canada (center)" "China (Beijing)" "China (Ningxia)" "EU (Francfort)" "EU (Irlande)" "EU (London)" "EU (Paris)" "EU (Stockholm)" "South America (Sao Paulo)"; do
-				case ${region} in
-					1)
-						awsAPIGateway="us-east-2"
-						;;
-					2)
-						awsAPIGateway="us-east-1"
-						;;
-					3)
-						awsAPIGateway="us-west-1"
-						;;
-					4)
-						awsAPIGateway="us-west-2"
-						;;
-					5)
-						awsAPIGateway="ap-east-1"
-						;;
-					6)
-						awsAPIGateway="ap-south-1"
-						;;
-					7)
-						awsAPIGateway="ap-northeast-2"
-						;;
-					8)
-						awsAPIGateway="ap-southeast-1"
-						;;
-					9)
-						awsAPIGateway="ap-southeast-2"
-						;;
-					10)
-						awsAPIGateway="ap-northeast-1"
-						;;
-					11)
-						awsAPIGateway="ca-central-1"
-						;;
-					12)
-						awsAPIGateway="cn-north-1"
-						;;
-					13)
-						awsAPIGateway="cn-northwest-1"
-						;;
-					14)
-						awsAPIGateway="eu-central-1"
-						;;
-					15)
-						awsAPIGateway="eu-west-1"
-						;;
-					16)
-						awsAPIGateway="eu-west-2"
-						;;
-					17)
-						awsAPIGateway="eu-west-3"
-						;;
-					18)
-						awsAPIGateway="eu-north-1"
-						;;
-					19)
-						awsAPIGateway="sa-east-1"
-						;;
-					*)
-						echo -e "\e[32mInvalid choice, falling back to eu-west-3\e[0m"
-						awsAPIGateway="eu-west-3"
-						;;
-				esac
+				do
+					case "$REGION" in
+						1 ) awsAPIGateway="us-east-2";;
+						2 ) awsAPIGateway="us-east-1";;
+						3 ) awsAPIGateway="us-west-1";;
+						4 ) awsAPIGateway="us-west-2";;
+						5 ) awsAPIGateway="ap-east-1";;
+						6 ) awsAPIGateway="ap-south-1";;
+						7 ) awsAPIGateway="ap-northeast-2";;
+						8 ) awsAPIGateway="ap-southeast-1";;
+						9 ) awsAPIGateway="ap-southeast-2";;
+						10 ) awsAPIGateway="ap-northeast-1";;
+						11 ) awsAPIGateway="ca-central-1";;
+						12 ) awsAPIGateway="cn-north-1";;
+						13 ) awsAPIGateway="cn-northwest-1";;
+						14 ) awsAPIGateway="eu-central-1";;
+						15 ) awsAPIGateway="eu-west-1";;
+						16 ) awsAPIGateway="eu-west-2";;
+						17 ) awsAPIGateway="eu-west-3";;
+						18 ) awsAPIGateway="eu-north-1";;
+						19 ) awsAPIGateway="sa-east-1";;
+						*) echo -e "\e[32mInvalid choice\e[0m";;
+					esac
+				done
 				;;
 		esac
         ;;
