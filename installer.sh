@@ -239,8 +239,7 @@ case "$choice" in
         ;;
     *)
         installPulseAudio='n'
-        echo -e "\e[31mno\e[0m"
-        read -p $'\e[33mOk! No problem!\e[0m'
+        echo -e "\e[33mOk! No problem!\e[0m"
         ;;
 esac
 
