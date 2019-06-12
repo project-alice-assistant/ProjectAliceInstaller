@@ -134,9 +134,8 @@ case "$choice" in
 				ttsService="google"
 				echo -e "\e[32mGoogle WaveNet, ok!\e[0m"
 				;;
-			a|A)
+			a|A|b|B)
 				ttsService="amazon"
-				echo -e "\e[32m>Amazon Polly, ok!\e[0m"
 				read -p $'\e[33mI need your AWS access key to configure the TTS\e[0m' awsAccessKey
 				read -p $'\e[33mAnd your AWS secret key... Please?\e[0m' awsSecretKey
 				echo -e "\e[33mI need you to select the correct AWS API Gateway\e[0m"
@@ -205,10 +204,6 @@ case "$choice" in
 						;;
 				esac
 				done
-				;;
-			b|B)
-				ttsService="both"
-				echo -e "\e[32m>Both of them, ok!\e[0m"
 				;;
 		esac
         ;;
@@ -469,7 +464,6 @@ if [[ "$installSamba" == "y" ]]; then
 fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
-sed -i -e 's/\# disable_playback = false/disable_playback = true/' /etc/snips.toml
 	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${AWS_API_SERVER}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
