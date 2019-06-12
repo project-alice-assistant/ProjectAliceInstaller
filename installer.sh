@@ -431,7 +431,7 @@ elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
 fi
 sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 
-pip3.7 install -r requirements.txt
+pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements.txt
 
 echo -e "\e[33mCatching breath...\e[0m"
 sleep 2s
