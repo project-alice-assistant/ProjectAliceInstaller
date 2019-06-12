@@ -72,9 +72,9 @@ case "$choice" in
 			git remote add origin -f https://bitbucket.org/Psychokiller1888/project-alice.git
 		else
 			cd ${USERDIR}/project-alice
-			git pull
 		fi
-
+		
+		git pull
 		cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
 		chown -R pi ${USERDIR}/ProjectAlice
         ;;
