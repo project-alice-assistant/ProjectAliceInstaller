@@ -9,7 +9,7 @@ Yes, but this one has a big advantage: Using Snips for the voice recognition and
 # Who made this?
 The original code was started end 2015 and several rewrite made it what it is today. It was entirely written by me Psycho until this point, where I decided to open it to the world. There's no money asked, no contribution, but as the license states, you should give back what you've been given, share your improvements and addons to the rest of us, in the form of pull requests.
 
-As of may 2019, Jierka joined me to prepare Alice for a public release!
+As of may 2019, Jierka joined me to prepare Alice for a public release, by providing quality code and fresh ideas and insight over the project. Needless to say he's a corner stone too of the whole project!
 
 
 # Project Alice, as in "Resident Evil", isn't that scary?
