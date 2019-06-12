@@ -361,17 +361,16 @@ cp ${USERDIR}/ProjectAliceInstaller/pulseaudio.sample /etc/systemd/system/pulsea
 systemctl --global disable pulseaudio.service pulseaudio.socket
 systemctl enable pulseaudio
 systemctl start pulseaudio
-systemctl --system status pulseaudio.service
 usermod -G pulse-access -a pi
 usermod -G pulse-access -a _snips
 
-pactl list short sinks
+sudo -u ${USER} pactl list short sinks
 read -p $'\e[32mPlease type the index number of your default audio output \e[0m' output
-pactl set-default-sink ${output}
+sudo -u ${USER} pactl set-default-sink ${output}
 
-pactl list short sources
+sudo -u ${USER} pactl list short sources
 read -p $'\e[32mPlease type the index number of your default audio input \e[0m' input
-pactl set-default-source ${input}
+sudo -u ${USER} pactl set-default-source ${input}
 
 
 escaped=${USERDIR//\//\\/}
