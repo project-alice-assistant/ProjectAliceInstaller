@@ -358,6 +358,9 @@ sudo -u ${USER} pactl list short sources
 read -p $'\e[32mPlease type the index number of your default audio input \e[0m' input
 sudo -u ${USER} pactl set-default-source ${input}
 
+sed -i -e 's/; default-fragments = 4/default-fragments = 5/' /etc/pulse/daemon.conf
+sed -i -e 's/; default-fragments-size-msec = 25/default-fragments-size-msec = 2/' /etc/pulse/daemon.conf
+
 
 escaped=${USERDIR//\//\\/}
 sed -i -e 's/\#WORKINGDIR/WorkingDirectory='${escaped}'\/ProjectAlice/' /etc/systemd/system/ProjectAlice.service
