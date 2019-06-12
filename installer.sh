@@ -56,11 +56,11 @@ case "$choice" in
 			read -p $'\e[32mDo you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
 			case "$choice" in
 				i|I)
-					echo -e "\eGetting rid of the demons of the past!\e[0m"
+					echo -e "\e[32mGetting rid of the demons of the past!\e[0m"
 					rm -rf ${USERDIR}/ProjectAlice
 					;;
 				*)
-					echo -e "\eOk, let's try to update!\e[0m"
+					echo -e "\e[32mOk, let's try to update!\e[0m"
 					;;
 			esac
 		fi
