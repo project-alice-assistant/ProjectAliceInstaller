@@ -141,26 +141,45 @@ case "$choice" in
 				echo -e "\e[33mI need you to select the correct AWS API Gateway\e[0m"
 				select region in "East USA (Ohio)" "East USA (North Virginia)" "West USA (North California)" "West USA (Oregon)" "Asia Pacific (Hong Kong)" "Asia Pacific (Mumbai)" "Asia Pacific (Seoul)" "Asia Pacific (Singapour)" "Asia Pacific (Sydney)" "Asia Pacific (Tokyo)" "Canada (center)" "China (Beijing)" "China (Ningxia)" "EU (Francfort)" "EU (Irlande)" "EU (London)" "EU (Paris)" "EU (Stockholm)" "South America (Sao Paulo)"
 				do
-					case $region in
-						"East USA (Ohio)") awsAPIGateway="us-east-2";;
-						"East USA (North Virginia)") awsAPIGateway="us-east-1";;
-						"West USA (North California)") awsAPIGateway="us-west-1";;
-						"West USA (Oregon)") awsAPIGateway="us-west-2";;
-						"Asia Pacific (Hong Kong)") awsAPIGateway="ap-east-1";;
-						"Asia Pacific (Mumbai)") awsAPIGateway="ap-south-1";;
-						"Asia Pacific (Seoul)") awsAPIGateway="ap-northeast-2";;
-						"Asia Pacific (Singapour)") awsAPIGateway="ap-southeast-1";;
-						"Asia Pacific (Sydney)") awsAPIGateway="ap-southeast-2";;
-						"Asia Pacific (Tokyo)") awsAPIGateway="ap-northeast-1";;
-						"Canada (center)") awsAPIGateway="ca-central-1";;
-						"China (Beijing)") awsAPIGateway="cn-north-1";;
-						"China (Ningxia)") awsAPIGateway="cn-northwest-1";;
-						"EU (Francfort)") awsAPIGateway="eu-central-1";;
-						"EU (Irlande)") awsAPIGateway="eu-west-1";;
-						"EU (London)") awsAPIGateway="eu-west-2";;
-						"EU (Paris)") awsAPIGateway="eu-west-3";;
-						"EU (Stockholm)") awsAPIGateway="eu-north-1";;
-						"South America (Sao Paulo)") awsAPIGateway="sa-east-1";;
+					case "$region" in
+						"East USA (Ohio)")
+							awsAPIGateway="us-east-2"; break;;
+						"East USA (North Virginia)")
+							awsAPIGateway="us-east-1"; break;;
+						"West USA (North California)")
+							awsAPIGateway="us-west-1"; break;;
+						"West USA (Oregon)")
+							awsAPIGateway="us-west-2"; break;;
+						"Asia Pacific (Hong Kong)")
+							awsAPIGateway="ap-east-1"; break;;
+						"Asia Pacific (Mumbai)")
+							awsAPIGateway="ap-south-1"; break;;
+						"Asia Pacific (Seoul)")
+							awsAPIGateway="ap-northeast-2"; break;;
+						"Asia Pacific (Singapour)")
+							awsAPIGateway="ap-southeast-1"; break;;
+						"Asia Pacific (Sydney)")
+							awsAPIGateway="ap-southeast-2"; break;;
+						"Asia Pacific (Tokyo)")
+							awsAPIGateway="ap-northeast-1"; break;;
+						"Canada (center)")
+							awsAPIGateway="ca-central-1"; break;;
+						"China (Beijing)")
+							awsAPIGateway="cn-north-1"; break;;
+						"China (Ningxia)")
+							awsAPIGateway="cn-northwest-1"; break;;
+						"EU (Francfort)")
+							awsAPIGateway="eu-central-1"; break;;
+						"EU (Irlande)")
+							awsAPIGateway="eu-west-1"; break;;
+						"EU (London)")
+							awsAPIGateway="eu-west-2"; break;;
+						"EU (Paris)")
+							awsAPIGateway="eu-west-3"; break;;
+						"EU (Stockholm)")
+							awsAPIGateway="eu-north-1"; break;;
+						"South America (Sao Paulo)")
+							awsAPIGateway="sa-east-1"; break;;
 						*) echo -e "\e[32mInvalid choice\e[0m";;
 					esac
 				done
