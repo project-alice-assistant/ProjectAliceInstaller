@@ -356,6 +356,30 @@ if [[ "$installGoogleASR" == "y" ]]; then
 	systemctl enable snips-asr-google
 fi
 
+echo -e "\e[33mInstalling Pulseaudio\e[0m"
+apt-get install -y pulseaudio
+
+if [[ -f /etc/systemd/system/pulseaudio.service ]]; then
+    rm /etc/systemd/system/pulseaudio.service
+fi
+
+cp ${USERDIR}/ProjectAliceInstaller/pulseaudio.sample /etc/systemd/system/pulseaudio.service
+systemctl --global disable pulseaudio.service pulseaudio.socket
+systemctl enable pulseaudio
+systemctl start pulseaudio
+systemctl --system status pulseaudio.service
+usermod -G pulse-access -a pi
+usermod -G pulse-access -a _snips
+
+pactl list short sinks
+read -p $'\e[32mPlease type the index number of your default audio output \e[0m' output
+pactl set-default-sink ${output}
+
+pactl list short sources
+read -p $'\e[32mPlease type the index number of your default audio input \e[0m' input
+pactl set-default-source ${input}
+
+
 escaped=${USERDIR//\//\\/}
 sed -i -e 's/\#WORKINGDIR/WorkingDirectory='${escaped}'\/ProjectAlice/' /etc/systemd/system/ProjectAlice.service
 sed -i -e 's/\#EXECSTART/ExecStart='${escaped}'\/ProjectAlice\/venv\/bin\/python3.7 main.py/' /etc/systemd/system/ProjectAlice.service

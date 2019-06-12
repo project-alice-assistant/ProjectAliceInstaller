@@ -1,0 +1,14 @@
+[Unit]
+Description=PulseAudio system-wide server
+# network only required for remote sinks
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/pulse/pid
+ExecStart=/usr/bin/pulseaudio --daemonize --system --realtime --log-target=journal
+ExecStop=/usr/bin/pulseaudio -k
+
+[Install]
+WantedBy=multi-user.target
