@@ -134,8 +134,12 @@ case "$choice" in
 				ttsService="google"
 				echo -e "\e[32mGoogle WaveNet, ok!\e[0m"
 				;;
-			*)
+			a|A|b|B)
 				ttsService="amazon"
+				if [[ "$choice" == "b" || "$choice" == "B" ]]; then
+					ttsService="both"
+				fi
+				
 				read -p $'\e[33mI need your AWS access key to configure the TTS: \e[0m' awsAccessKey
 				read -p $'\e[33mAnd your AWS secret key... Please? \e[0m' awsSecretKey
 				echo -e "\e[33mI need you to select the correct AWS API Gateway\e[0m"
@@ -184,6 +188,10 @@ case "$choice" in
 					esac
 				done
 				;;
+			*)
+				echo -e "\e[32mInvalid choice, defaulting to Amazon Polly\e[0m"
+				ttsService="amazon"
+				break;;
 		esac
         ;;
     *)
@@ -200,7 +208,7 @@ case "$choice" in
         echo -e "\e[31mOk... PicoTTS it is then...\e[0m"
         ;;
     *)
-        installMycroft="o"
+        installMycroft="y"
         echo -e "\e[32mOk, I will install what's needed\e[0m"
 		if [[ "$ttsService" == "offline" ]]; then
 			ttsService="mycroft"
@@ -396,7 +404,7 @@ grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --ap
 
 if [[ "$ttsService" == "offline" ]]; then
 	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-elif [[ "$ttsService" == "mycroft" || "$installMycroft" == "o" ]]; then
+elif [[ "$ttsService" == "mycroft" || "$installMycroft" == "y" ]]; then
 	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
@@ -444,7 +452,7 @@ fi
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
 	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${AWS_API_SERVER}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 	sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 
 	cd ${USERDIR}

@@ -7,13 +7,13 @@ soco
 paho-mqtt
 watchdog
 toml
-requests==2.22.0
+requests==2.21.0
+BeautifulSoup4==4.6.3
 requests-jwt
 spidev
 gpiozero
 Adafruit_MCP9808
 py-translator
-BeautifulSoup4==4.6.3
 langdetect
 slugify
 wikipedia
