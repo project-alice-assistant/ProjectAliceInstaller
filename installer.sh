@@ -128,7 +128,7 @@ esac
 read -p $'\e[33mFor a better voice you can use online TTS services, do you want to install one (y/n) ? \e[0m' choice
 case "$choice" in
     y|Y)
-        read -p $'\e[33m(A)mazon Polly, (G)oogle WaveNet or (b)oth of them depending on who talks? \e[0m' choice
+        read -p $'\e[33m(A)mazon Polly, (G)oogle WaveNet or (b)oth? \e[0m' choice
 		case "$choice" in
 			g|G)
 				ttsService="google"
@@ -139,9 +139,9 @@ case "$choice" in
 				read -p $'\e[33mI need your AWS access key to configure the TTS: \e[0m' awsAccessKey
 				read -p $'\e[33mAnd your AWS secret key... Please? \e[0m' awsSecretKey
 				echo -e "\e[33mI need you to select the correct AWS API Gateway\e[0m"
-				select region in "East USA (Ohio)" "East USA (North Virginia)" "West USA (North California)" "West USA (Oregon)" "Asia Pacific (Hong Kong)" "Asia Pacific (Mumbai)" "Asia Pacific (Seoul)" "Asia Pacific (Singapour)" "Asia Pacific (Sydney)" "Asia Pacific (Tokyo)" "Canada (center)" "China (Beijing)" "China (Ningxia)" "EU (Francfort)" "EU (Irlande)" "EU (London)" "EU (Paris)" "EU (Stockholm)" "South America (Sao Paulo)";
+				select region in "East USA (Ohio)" "East USA (North Virginia)" "West USA (North California)" "West USA (Oregon)" "Asia Pacific (Hong Kong)" "Asia Pacific (Mumbai)" "Asia Pacific (Seoul)" "Asia Pacific (Singapour)" "Asia Pacific (Sydney)" "Asia Pacific (Tokyo)" "Canada (center)" "China (Beijing)" "China (Ningxia)" "EU (Francfort)" "EU (Irlande)" "EU (London)" "EU (Paris)" "EU (Stockholm)" "South America (Sao Paulo)"
 				do
-					case "$region" in
+					case $region in
 						"East USA (Ohio)") awsAPIGateway="us-east-2";;
 						"East USA (North Virginia)") awsAPIGateway="us-east-1";;
 						"West USA (North California)") awsAPIGateway="us-west-1";;
@@ -163,7 +163,6 @@ case "$choice" in
 						"South America (Sao Paulo)") awsAPIGateway="sa-east-1";;
 						*) echo -e "\e[32mInvalid choice\e[0m";;
 					esac
-					;;
 				done
 				;;
 		esac
