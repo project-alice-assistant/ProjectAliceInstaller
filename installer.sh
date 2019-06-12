@@ -163,6 +163,7 @@ case "$choice" in
 						"South America (Sao Paulo)") awsAPIGateway="sa-east-1";;
 						*) echo -e "\e[32mInvalid choice\e[0m";;
 					esac
+					;;
 				done
 				;;
 		esac
@@ -377,7 +378,7 @@ grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --ap
 
 if [[ "$ttsService" == "offline" ]]; then
 	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-elif [[ "$ttsService" == "mycroft" ]]; then
+elif [[ "$ttsService" == "mycroft" || "$installMycroft" == "o" ]]; then
 	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
