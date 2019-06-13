@@ -109,11 +109,31 @@ then
     esac
 fi
 
+echo
+echo -e "\e[33mI need your Snips console credentials in order to manage the assistant package\e[0m"
+read -e -p $'\e[33memail: \e[0m' snipsLogin
+read -e -p $'\e[33mpassword: \e[0m' -s snipsPassword
+read -e -p $'\e[33mConsole username. If you intent to use the provided assistant, let it to default \e[0m' -i 'Psychokiller1888' snipsUsername
+echo
+echo -e "\e[33mThank you for this, now, let's continue to the real stuff\e[0m"
+echo
+echo -e "\e[33mOh, wait, what language do you want me to use once installed?\e[0m"
+select snipsLang in "en" "fr"
+do
+	case "$snipsLang" in
+		en|fr)
+		echo -e "\e[33mOk, setting to boot in $snipsLang\e[0m"; break;;
+	case *)
+		echo -e "\e[31mInvalid choice\e[0m";
+	esac
+done
+
 installPython="n"
 optimizePython="n"
 installGoogleASR="n"
 installMycroft="n"
 
+echo
 read -p $'\e[33mDo you want to use Google ASR when online (y/n) ? \e[0m' choice
 case "$choice" in
     n|N)
@@ -331,7 +351,7 @@ fi
 
 cp ${USERDIR}/ProjectAlice/ProjectAlice.service /etc/systemd/system
 
-apt-get install -y mpg123 dirmngr python3-pip gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev
+apt-get install -y mpg123 dirmngr python3-pip gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev flac
 
 echo -e "\e[33mSmoking guns...\e[0m"
 sleep 2s
@@ -348,7 +368,7 @@ if [[ "$installGoogleASR" == "y" ]]; then
 	systemctl enable snips-asr-google
 fi
 
-if [[ "installPulseAudio" == "y" ]]; then
+if [[ "$installPulseAudio" == "y" ]]; then
 	echo -e "\e[33mInstalling Pulseaudio\e[0m"
 	apt-get install -y pulseaudio
 
@@ -381,6 +401,24 @@ sed -i -e 's/\#EXECSTART/ExecStart='${escaped}'\/ProjectAlice\/venv\/bin\/python
 sed -i -e 's/\#USER/User='${USER}'/' /etc/systemd/system/ProjectAlice.service
 
 sed -i -e 's/\# assistant = "\/usr\/share\/snips\/assistant"/assistant = "'${escaped}'\/ProjectAlice\/assistant"/' /etc/snips.toml
+
+if [[ ! -f "$USERDIR/ProjectAlice/config.py" ]]; then
+	cp ${USERDIR}/ProjectAlice/configSample.py ${USERDIR}/ProjectAlice/config.py
+fi
+
+sed -i -e 's/"intentsOwner": ""/"intentsOwner": "'${snipsUsername}'",/' ${USERDIR}/ProjectAlice/config.py
+sed -i -e 's/"snipsConsoleLogin": "",/"snipsConsoleLogin": "'${snipsLogin}'",/' ${USERDIR}/ProjectAlice/config.py
+sed -i -e 's/"snipsConsolePassword": "",/"snipsConsolePassword": "'${snipsPassword}'",/' ${USERDIR}/ProjectAlice/config.py
+
+if [[ "$ttsService" == "offline" ]]; then
+	sed -i -e 's/"keepTTSOffline": False/"keepTTSOffline": True/' ${USERDIR}/ProjectAlice/config.py
+fi
+
+if [[ "$installGoogleASR" == "n" ]]; then
+	sed -i -e 's/"keepASROffline": False/"keepASROffline": True/' ${USERDIR}/ProjectAlice/config.py
+else
+	sed -i -e 's/"asr": "snips"/"asr": "google"/' ${USERDIR}/ProjectAlice/config.py
+fi
 
 if [[ -f "$USERDIR/ProjectAlice/googlecredentials.json" ]]; then
     sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/googlecredentials.json"/' /etc/snips.toml
@@ -440,7 +478,7 @@ chown -R pi ${USERDIR}/ProjectAlice
 chown -R _snips ${USERDIR}/ProjectAlice/cache
 chmod 775 ${USERDIR}/ProjectAlice/cache
 
-ln -sfn ${USERDIR}/ProjectAlice/assistants/assistant_en ${USERDIR}/ProjectAlice/assistant
+ln -sfn ${USERDIR}/ProjectAlice/assistants/assistant_${snipsLang} ${USERDIR}/ProjectAlice/assistant
 ln -sfn ${USERDIR}/ProjectAlice/assistant/custom_sounds/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
 
 chmod 755 ${USERDIR}/ProjectAlice/shell/langSwitch.sh
@@ -510,13 +548,12 @@ systemctl is-active -q mosquitto && systemctl stop mosquitto
 sed -i -e 's/persistence true/persistence false/' /etc/mosquitto/mosquitto.conf
 rm /var/lib/mosquitto/mosquitto.db
 
-systemctl enable ProjectAlice
-systemctl restart snips-*
-
 echo -e "\e[33m==============================================\e[0m"
 echo -e "\e[33m          Project Alice installed             \e[0m"
-echo -e "\e[33m           Please wait for reboot             \e[0m"
+echo -e "\e[33m       Please press a key to reboot           \e[0m"
 echo -e "\e[33m==============================================\e[0m"
 
-sleep 5
-reboot
+read -n 1 -s -r -p
+
+systemctl enable ProjectAlice
+systemctl restart snips-*
