@@ -109,6 +109,7 @@ then
     esac
 fi
 
+
 echo
 echo -e "\e[33mI need your Snips console credentials in order to manage the assistant package\e[0m"
 read -e -p $'\e[33memail: \e[0m' snipsLogin
@@ -260,6 +261,18 @@ case "$choice" in
     *)
         installPulseAudio='n'
         echo -e "\e[33mOk! No problem!\e[0m"
+        ;;
+esac
+
+read -p $'\e[33mDo you have leds on my main unit? Like leds I could control? If so, I can install Snips Led Control for that! (y/n)? \e[0m' choice
+case "$choice" in
+    y|Y)
+        installSLC='y'
+        echo -e "\e[32myes\e[0m"
+        ;;
+    *)
+        installSLC='n'
+        echo -e "\e[33mOk, no led control...\e[0m"
         ;;
 esac
 
@@ -500,6 +513,13 @@ if [[ "$installSamba" == "y" ]]; then
 
     smbpasswd -a ${USER}
     /etc/init.d/samba restart
+fi
+
+if [[ "$installSLC" == "y" ]]; then
+	cd ${USERDIR}
+	wget https://gist.githubusercontent.com/Psychokiller1888/a9826f92c5a3c5d03f34d182fda1ce4c/raw/e24882e8997730dcf7a308e303b3b88001dbbfa1/slc_download.sh
+	chmod +x slc_download.sh
+	./slc_download.sh
 fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
