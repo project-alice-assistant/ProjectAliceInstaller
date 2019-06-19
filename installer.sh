@@ -516,10 +516,14 @@ if [[ "$installSamba" == "y" ]]; then
 fi
 
 if [[ "$installSLC" == "y" ]]; then
+	sed -i -e 's/"useSLC": False/"useSLC": True/' ${USERDIR}/ProjectAlice/config.py
+
 	cd ${USERDIR}
 	wget https://gist.githubusercontent.com/Psychokiller1888/a9826f92c5a3c5d03f34d182fda1ce4c/raw/e24882e8997730dcf7a308e303b3b88001dbbfa1/slc_download.sh
 	chmod +x slc_download.sh
 	./slc_download.sh
+	
+	systemctl is-active -q snipsledcontrol && systemctl stop snipsledcontrol && systemctl disable snipsledcontrol
 fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
