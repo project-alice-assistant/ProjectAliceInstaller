@@ -501,15 +501,12 @@ chown -R _snips ${USERDIR}/ProjectAlice/cache
 chmod 775 ${USERDIR}/ProjectAlice/cache
 
 ln -sfn ${USERDIR}/ProjectAlice/assistants/assistant_${snipsLang} ${USERDIR}/ProjectAlice/assistant
-ln -sfn ${USERDIR}/ProjectAlice/assistant/custom_sounds/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
+ln -sfn ${USERDIR}/ProjectAlice/sounds/${snipsLang}/start_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/start_of_input.wav
+ln -sfn ${USERDIR}/ProjectAlice/sounds/${snipsLang}/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
+ln -sfn ${USERDIR}/ProjectAlice/sounds/${snipsLang}/error.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/error.wav
 
 chmod 755 ${USERDIR}/ProjectAlice/shell/langSwitch.sh
-chmod 755 ${USERDIR}/ProjectAlice/shell/reboot.sh
-chmod 755 ${USERDIR}/ProjectAlice/shell/restart.sh
-chmod 755 ${USERDIR}/ProjectAlice/shell/restartSnips.sh
-chmod 755 ${USERDIR}/ProjectAlice/shell/screen.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-chmod 755 ${USERDIR}/ProjectAlice/shell/switchOnlineState.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/switchTTSOnlineState.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/switchSounds.sh
 
