@@ -377,9 +377,18 @@ apt-get install -y --allow-unauthenticated snips-watch
 
 if [[ "$installGoogleASR" == "y" ]]; then
 	apt-get install -y snips-asr-google
+	systemctl stop snips-asr-google
+	systemctl disable snips-asr-google
 fi
 
-systemctl stop snips-* && systemctl disable snips-*
+systemctl stop snips-*
+systemctl disable snips-asr
+systemctl disable snips-tts
+systemctl disable snips-hotword
+systemctl disable snips-nlu
+systemctl disable snips-dialog
+systemctl disable snips-injection
+systemctl disable snips-audio-server
 
 if [[ "$installPulseAudio" == "y" ]]; then
 	echo -e "\e[33mInstalling Pulseaudio\e[0m"
