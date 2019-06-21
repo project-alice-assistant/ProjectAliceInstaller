@@ -4,13 +4,19 @@
 
 VENV=venv
 
-echo -e "\e[33m=============================\e[0m"
-echo -e "\e[33m  Installing Project Alice   \e[0m"
-echo -e "\e[33m=============================\e[0m"
+clear
+echo
+echo -e "\e[100;33m===============================================\e[0m"
+echo -e "\e[100;33m                 Project Alice                 \e[0m"
+echo -e "\e[100;33m                  Installation                 \e[0m"
+echo -e "\e[100;33m                                               \e[0m"
+echo -e "\e[100;2;33m              By Psycho and Jierka             \e[0m"
+echo -e "\e[100;2;90m               ©GNUGPL v3.0 2019               \e[0m"
+echo -e "\e[100;33m===============================================\e[0m"
 echo
 
 if [[ "$EUID" -ne 0 ]]; then
-    echo -e "\e[33mPlease run with sudo\e[0m"
+    echo -e "\e[31mPlease run with sudo\e[0m"
     exit
 fi
 
@@ -32,7 +38,7 @@ read -p $'\e[33mIs this device going to be a (m)ain unit or a (s)atelitte? \e[0m
 case "$choice" in
     s|S)
         installMode=2
-        echo -e "\e[32mSatellite\e[0m"
+        echo -e "\e[33mSatellite\e[0m"
         echo -e "\e[31mNot yet implemented!\e[0m"
         exit
         ;;
@@ -42,7 +48,7 @@ case "$choice" in
 		
 		if [[ -d "$USERDIR/ProjectAlice" ]]; then
 			echo
-			read -p $'\e[32mI have found existing directories where I should install. Shall I make a backup (y/n)? \e[0m' choice
+			read -p $'\e[33mI have found existing directories where I should install. Shall I make a backup (y/n)? \e[0m' choice
 			case "$choice" in
 				y|Y)
 					echo -e "\e[32mOk, backing them up!\e[0m"
@@ -53,7 +59,7 @@ case "$choice" in
 					echo -e "\e[32mGone they are!\e[0m"
 					;;
 			esac
-			read -p $'\e[32mDo you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
+			read -p $'\e[33mDo you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
 			case "$choice" in
 				i|I)
 					echo -e "\e[32mGetting rid of the demons of the past!\e[0m"
@@ -83,17 +89,17 @@ if [[ "$installMode" == 1 ]]
 then
     echo
     echo -e "\e[33mOk, so this device is going to be my main unit, my home\e[0m"
-    read -e -p $'\e[33mIn what room are you going to place my main unit? \e[0m' -i 'default' siteId
+    read -e -p $'\e[33mIn what room are you going to place my main unit? \e[0m' -i 'living-room' siteId
     siteId=${siteId/_/ /.}
     read -p $'\e[33mDo you want me to enable sound playback and record (y/n)? \e[0m' choice
     case "$choice" in
         n|N)
             enableAudio=0
-            echo -e "\e[31mSound disabled\e[0m"
+            echo -e "\e[32mSound disabled\e[0m"
             ;;
         *)
             enableAudio=1
-            echo -e "\e[31mSound enabled\e[0m"
+            echo -e "\e[32mSound enabled\e[0m"
             read -p $'\e[33mDo you want me to install my audio device (y/n)? \e[0m' choice
             case "$choice" in
                 y|Y)
@@ -212,13 +218,13 @@ case "$choice" in
 				done
 				;;
 			*)
-				echo -e "\e[32mInvalid choice, defaulting to Amazon Polly\e[0m"
+				echo -e "\e[31mInvalid choice, defaulting to Amazon Polly\e[0m"
 				ttsService="amazon"
 				break;;
 		esac
         ;;
     *)
-        echo -e "\e[31mOk, only offline TTS\e[0m"
+        echo -e "\e[32mOk, only offline TTS\e[0m"
 		ttsService="offline"
         ;;
 esac
@@ -247,7 +253,7 @@ case "$choice" in
         ;;
     *)
         installSamba='n'
-        echo -e "\e[31mno\e[0m"
+        echo -e "\e[32mno\e[0m"
         read -p $'\e[33mOk! But make sure to have /share created for Samba!\e[0m'
         ;;
 esac
@@ -260,7 +266,7 @@ case "$choice" in
         ;;
     *)
         installPulseAudio='n'
-        echo -e "\e[33mOk! No problem!\e[0m"
+        echo -e "\e[32mOk! No problem!\e[0m"
         ;;
 esac
 
@@ -272,7 +278,7 @@ case "$choice" in
         ;;
     *)
         installSLC='n'
-        echo -e "\e[33mOk, no led control...\e[0m"
+        echo -e "\e[31mOk, no led control...\e[0m"
         ;;
 esac
 
@@ -303,7 +309,7 @@ which python3.7 || {
                 ;;
             *)
                 optimizePython='n'
-                echo -e "\e[31mBetter save some time against some perfs, right!\e[0m"
+                echo -e "\e[32mBetter save some time against some perfs, right!\e[0m"
                 ;;
         esac
     else
@@ -316,7 +322,7 @@ which python3.7 || {
                 ;;
             *)
                 optimizePython='n'
-                echo -e "\e[31mBetter save some time against some perfs, right!\e[0m"
+                echo -e "\e[32mBetter save some time against some perfs, right!\e[0m"
                 ;;
         esac
     fi
@@ -406,11 +412,11 @@ if [[ "$installPulseAudio" == "y" ]]; then
 	usermod -G pulse-access -a _snips
 
 	sudo -u ${USER} pactl list short sinks
-	read -p $'\e[32mPlease type the index number of your default audio output \e[0m' output
+	read -p $'\e[33mPlease type the index number of your default audio output \e[0m' output
 	sudo -u ${USER} pactl set-default-sink ${output}
 
 	sudo -u ${USER} pactl list short sources
-	read -p $'\e[32mPlease type the index number of your default audio input \e[0m' input
+	read -p $'\e[33mPlease type the index number of your default audio input \e[0m' input
 	sudo -u ${USER} pactl set-default-source ${input}
 
 	sed -i -e 's/; default-fragments = 4/default-fragments = 5/' /etc/pulse/daemon.conf
@@ -508,7 +514,6 @@ ln -sfn ${USERDIR}/ProjectAlice/sounds/${snipsLang}/error.wav ${USERDIR}/Project
 chmod 755 ${USERDIR}/ProjectAlice/shell/langSwitch.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
 chmod 755 ${USERDIR}/ProjectAlice/shell/switchTTSOnlineState.sh
-chmod 755 ${USERDIR}/ProjectAlice/shell/switchSounds.sh
 
 if [[ "$installSamba" == "y" ]]; then
     apt-get install -y samba
@@ -578,10 +583,10 @@ systemctl is-active -q mosquitto && systemctl stop mosquitto
 sed -i -e 's/persistence true/persistence false/' /etc/mosquitto/mosquitto.conf
 rm /var/lib/mosquitto/mosquitto.db
 
-echo -e "\e[33m==============================================\e[0m"
-echo -e "\e[33m          Project Alice installed             \e[0m"
-echo -e "\e[33m       Please press a key to reboot           \e[0m"
-echo -e "\e[33m==============================================\e[0m"
+echo -e "\e[100;33m===============================================\e[0m"
+echo -e "\e[100;33m           Project Alice installed             \e[0m"
+echo -e "\e[100;33m        Please press a key to reboot           \e[0m"
+echo -e "\e[100;33m===============================================\e[0m"
 
 read -n 1 -s -r -p
 
