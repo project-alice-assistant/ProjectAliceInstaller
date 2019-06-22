@@ -120,6 +120,7 @@ echo
 echo -e "\e[33mI need your Snips console credentials in order to manage the assistant package\e[0m"
 read -e -p $'\e[33memail: \e[0m' snipsLogin
 read -e -p $'\e[33mpassword: \e[0m' -s snipsPassword
+echo
 read -e -p $'\e[33mConsole username. If you intent to use the provided assistant, let it to default \e[0m' -i 'Psychokiller1888' snipsUsername
 echo
 echo -e "\e[33mThank you for this, now, let's continue to the real stuff\e[0m"
@@ -129,9 +130,9 @@ select snipsLang in "en" "fr"
 do
 	case "$snipsLang" in
 		en|fr)
-		echo -e "\e[33mOk, setting to boot in $snipsLang\e[0m"; break;;
-	case *)
-		echo -e "\e[31mInvalid choice\e[0m";
+			echo -e "\e[33mOk, setting to boot in $snipsLang\e[0m"; break;;
+		*)
+			echo -e "\e[31mInvalid choice\e[0m";
 	esac
 done
 
