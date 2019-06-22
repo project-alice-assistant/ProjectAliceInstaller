@@ -592,6 +592,9 @@ systemctl is-active -q mosquitto && systemctl stop mosquitto
 sed -i -e 's/persistence true/persistence false/' /etc/mosquitto/mosquitto.conf
 rm /var/lib/mosquitto/mosquitto.db
 
+systemctl enable ProjectAlice
+systemctl restart snips-*
+
 clear
 
 echo -e "\e[100;33m===============================================\e[0m"
@@ -600,6 +603,4 @@ echo -e "\e[100;33m        Please press enter to reboot           \e[0m"
 echo -e "\e[100;33m===============================================\e[0m"
 
 read -p "Press enter"
-
-systemctl enable ProjectAlice
-systemctl restart snips-*
+reboot
