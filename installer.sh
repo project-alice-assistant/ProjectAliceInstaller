@@ -81,7 +81,7 @@ case "$choice" in
 		fi
 		
 		cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
-		chown -R pi ${USERDIR}/ProjectAlice
+		chown -R ${USER} ${USERDIR}/ProjectAlice
         ;;
 esac
 
@@ -408,7 +408,7 @@ if [[ "$installPulseAudio" == "y" ]]; then
 	systemctl --global disable pulseaudio.service pulseaudio.socket
 	systemctl enable pulseaudio
 	systemctl start pulseaudio
-	usermod -G pulse-access -a pi
+	usermod -G pulse-access -a ${USER}
 	usermod -G pulse-access -a _snips
 
 	sudo -u ${USER} pactl list short sinks
@@ -502,7 +502,7 @@ mkdir ${USERDIR}/ProjectAlice/logs
 mkdir -p ${USERDIR}/ProjectAlice/cache
 mkdir -m 1777 /share
 
-chown -R pi ${USERDIR}/ProjectAlice
+chown -R ${USER} ${USERDIR}/ProjectAlice
 chown -R _snips ${USERDIR}/ProjectAlice/cache
 chmod 775 ${USERDIR}/ProjectAlice/cache
 
