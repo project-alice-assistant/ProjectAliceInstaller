@@ -129,7 +129,7 @@ echo -e "\e[33mI need your Snips console credentials in order to manage the assi
 read -e -p $'\e[33memail: \e[0m' snipsLogin
 read -e -p $'\e[33mpassword: \e[0m' -s snipsPassword
 echo
-read -e -p $'\e[33mYour console username:\e[0m' -i 'ProjectAlice' snipsUsername
+read -e -p $'\e[33mYour console username: \e[0m' -i 'ProjectAlice' snipsUsername
 echo
 echo -e "\e[33mThank you for this, now, let's continue to the real stuff\e[0m"
 echo
