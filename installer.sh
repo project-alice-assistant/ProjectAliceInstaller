@@ -7,11 +7,19 @@ VENV=venv
 clear
 echo
 echo -e "\e[100;33m===============================================\e[0m"
+echo -e "\e[100;33m            ========================           \e[0m"
+echo -e "\e[100;33m                ================               \e[0m"
+echo -e "\e[100;33m                    ========                   \e[0m"
+echo -e "\e[100;33m                                               \e[0m"
 echo -e "\e[100;33m                 Project Alice                 \e[0m"
 echo -e "\e[100;33m                  Installation                 \e[0m"
 echo -e "\e[100;33m                                               \e[0m"
-echo -e "\e[100;2;33m              By Psycho and Jierka             \e[0m"
-echo -e "\e[100;2;90m               ©GNUGPL v3.0 2019               \e[0m"
+echo -e "\e[100;33m             By Psycho and Jierka              \e[0m"
+echo -e "\e[100;90m               ©GNUGPL v3.0 2019               \e[0m"
+echo -e "\e[100;33m                                               \e[0m"
+echo -e "\e[100;33m                    ========                   \e[0m"
+echo -e "\e[100;33m                ================               \e[0m"
+echo -e "\e[100;33m            ========================           \e[0m"
 echo -e "\e[100;33m===============================================\e[0m"
 echo
 
@@ -583,6 +591,8 @@ systemctl daemon-reload
 systemctl is-active -q mosquitto && systemctl stop mosquitto
 sed -i -e 's/persistence true/persistence false/' /etc/mosquitto/mosquitto.conf
 rm /var/lib/mosquitto/mosquitto.db
+
+clear
 
 echo -e "\e[100;33m===============================================\e[0m"
 echo -e "\e[100;33m           Project Alice installed             \e[0m"
