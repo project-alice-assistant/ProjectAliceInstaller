@@ -387,8 +387,7 @@ sleep 2s
 bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list'
 apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
 apt-get update
-apt-get install -y --allow-unauthenticated snips-platform-voice
-apt-get install -y --allow-unauthenticated snips-watch
+apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch snips-tts
 
 if [[ "$installGoogleASR" == "y" ]]; then
 	apt-get install -y snips-asr-google
@@ -443,7 +442,7 @@ if [[ ! -f "$USERDIR/ProjectAlice/config.py" ]]; then
 	cp ${USERDIR}/ProjectAlice/configSample.py ${USERDIR}/ProjectAlice/config.py
 fi
 
-sed -i -e 's/"intentsOwner": ""/"intentsOwner": "'${snipsUsername}'",/' ${USERDIR}/ProjectAlice/config.py
+sed -i -e 's/"intentsOwner": ""/"intentsOwner": "'${snipsUsername}'"/' ${USERDIR}/ProjectAlice/config.py
 sed -i -e 's/"snipsConsoleLogin": "",/"snipsConsoleLogin": "'${snipsLogin}'",/' ${USERDIR}/ProjectAlice/config.py
 sed -i -e 's/"snipsConsolePassword": "",/"snipsConsolePassword": "'${snipsPassword}'",/' ${USERDIR}/ProjectAlice/config.py
 
@@ -603,4 +602,5 @@ echo -e "\e[100;33m        Please press enter to reboot           \e[0m"
 echo -e "\e[100;33m===============================================\e[0m"
 
 read -p "Press enter"
+clear
 reboot

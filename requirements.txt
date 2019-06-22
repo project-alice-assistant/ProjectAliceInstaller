@@ -13,7 +13,7 @@ requests-jwt
 spidev
 gpiozero
 Adafruit_MCP9808
-py-translator
+py-translate
 langdetect
 slugify
 wikipedia
