@@ -152,8 +152,18 @@ case "$choice" in
 			git stash apply
 		fi
 		
+		if [[ "$choice" == "u" ]]; then
+			cp ${USERDIR}/ProjectAlice/config.py ${USERDIR}/ProjectAlice/config.bkp
+		fi
+
 		cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
 		chown -R ${USER} ${USERDIR}/ProjectAlice
+		
+		if [[ "$choice" == "u" ]]; then
+			cp ${USERDIR}/ProjectAlice/config.bkp ${USERDIR}/ProjectAlice/config.py
+			read -p $'\e[33mI have updated your installation to the latest sources available. Press a key to exit \e[0m' choice
+			exit
+		fi
         ;;
 esac
 
