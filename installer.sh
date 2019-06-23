@@ -70,21 +70,21 @@ sleep 8
 clear
 
 echo
-echo -e "\e[100;33m===============================================\e[0m"
-echo -e "\e[100;33m            ========================           \e[0m"
-echo -e "\e[100;33m                ================               \e[0m"
-echo -e "\e[100;33m                    ========                   \e[0m"
-echo -e "\e[100;33m                                               \e[0m"
-echo -e "\e[100;33m                 Project Alice                 \e[0m"
-echo -e "\e[100;33m                  Installation                 \e[0m"
-echo -e "\e[100;33m                                               \e[0m"
-echo -e "\e[100;33m             By Psycho and Jierka              \e[0m"
-echo -e "\e[100;90m     Copyrighted under GNUGPL v3.0 2019        \e[0m"
-echo -e "\e[100;33m                                               \e[0m"
-echo -e "\e[100;33m                    ========                   \e[0m"
-echo -e "\e[100;33m                ================               \e[0m"
-echo -e "\e[100;33m            ========================           \e[0m"
-echo -e "\e[100;33m===============================================\e[0m"
+echo -e "\e[100;33m================================================\e[0m"
+echo -e "\e[100;33m            ========================            \e[0m"
+echo -e "\e[100;33m                ================                \e[0m"
+echo -e "\e[100;33m                    ========                    \e[0m"
+echo -e "\e[100;33m                                                \e[0m"
+echo -e "\e[100;33m                 Project Alice                  \e[0m"
+echo -e "\e[100;33m                  Installation                  \e[0m"
+echo -e "\e[100;33m                                                \e[0m"
+echo -e "\e[100;33m             By Psycho and Jierka               \e[0m"
+echo -e "\e[100;90m     Copyrighted under GNUGPL v3.0 2019         \e[0m"
+echo -e "\e[100;33m                                                \e[0m"
+echo -e "\e[100;33m                    ========                    \e[0m"
+echo -e "\e[100;33m                ================                \e[0m"
+echo -e "\e[100;33m            ========================            \e[0m"
+echo -e "\e[100;33m================================================\e[0m"
 echo
 
 if [[ "$EUID" -ne 0 ]]; then
@@ -464,7 +464,7 @@ systemctl disable snips-asr
 systemctl disable snips-tts
 systemctl disable snips-hotword
 systemctl disable snips-nlu
-systemctl disable snips-dialog
+systemctl disable snips-dialogue
 systemctl disable snips-injection
 systemctl disable snips-audio-server
 
