@@ -139,7 +139,19 @@ case "$choice" in
 					;;
 				*)
 					echo -e "\e[32mOk, let's try to update!\e[0m"
-					;;
+					cd ${USERDIR}/project-alice
+					git stash
+					git pull
+					git stash apply
+					
+					cp ${USERDIR}/ProjectAlice/config.py ${USERDIR}/ProjectAlice/config.bkp
+					cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
+					chown -R ${USER} ${USERDIR}/ProjectAlice
+					cp ${USERDIR}/ProjectAlice/config.bkp ${USERDIR}/ProjectAlice/config.py
+					echo
+					read -p $'\e[33mI have updated your installation to the latest sources available. Press a key to exit \e[0m' choice
+					systemctl start ProjectAlice
+					exit;;
 			esac
 		fi
 		
@@ -152,18 +164,9 @@ case "$choice" in
 			git stash apply
 		fi
 		
-		if [[ "$choice" == "u" ]]; then
-			cp ${USERDIR}/ProjectAlice/config.py ${USERDIR}/ProjectAlice/config.bkp
-		fi
-
 		cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
 		chown -R ${USER} ${USERDIR}/ProjectAlice
 		
-		if [[ "$choice" == "u" ]]; then
-			cp ${USERDIR}/ProjectAlice/config.bkp ${USERDIR}/ProjectAlice/config.py
-			read -p $'\e[33mI have updated your installation to the latest sources available. Press a key to exit \e[0m' choice
-			exit
-		fi
         ;;
 esac
 
@@ -666,7 +669,6 @@ sed -i -e 's/persistence true/persistence false/' /etc/mosquitto/mosquitto.conf
 rm /var/lib/mosquitto/mosquitto.db
 
 systemctl enable ProjectAlice
-systemctl restart snips-*
 
 clear
 
