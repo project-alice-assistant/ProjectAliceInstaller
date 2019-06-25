@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#http://bit.ly/ProjectAliceDL
-
 VENV=venv
 
 clear
