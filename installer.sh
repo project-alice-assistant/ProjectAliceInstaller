@@ -144,7 +144,7 @@ case "$choice" in
 					git stash apply
 					
 					cp ${USERDIR}/ProjectAlice/config.py ${USERDIR}/ProjectAlice/config.bkp
-					cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
+					cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
 					chown -R ${USER} ${USERDIR}/ProjectAlice
 					cp ${USERDIR}/ProjectAlice/config.bkp ${USERDIR}/ProjectAlice/config.py
 					echo
@@ -163,7 +163,7 @@ case "$choice" in
 			git stash apply
 		fi
 		
-		cp -rf ${USERDIR}/project-alice/core ${USERDIR}/ProjectAlice
+		cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
 		chown -R ${USER} ${USERDIR}/ProjectAlice
 		
         ;;
@@ -453,7 +453,7 @@ if [[ -f /etc/systemd/system/ProjectAlice.service ]]; then
     rm /etc/systemd/system/ProjectAlice.service
 fi
 
-cp ${USERDIR}/ProjectAlice/ProjectAlice.service /etc/systemd/system
+mv ${USERDIR}/ProjectAlice/ProjectAlice.service /etc/systemd/system
 
 apt-get install -y apt-transport-https zip unzip mpg123 dirmngr python3-pip gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev flac
 
@@ -532,28 +532,28 @@ else
 	sed -i -e 's/"asr": "snips"/"asr": "google"/' ${USERDIR}/ProjectAlice/config.py
 fi
 
-if [[ -f "$USERDIR/ProjectAlice/googlecredentials.json" ]]; then
-    sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/googlecredentials.json"/' /etc/snips.toml
+if [[ -f "$USERDIR/ProjectAlice/credentials/googlecredentials.json" ]]; then
+    sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/credentials\/googlecredentials.json"/' /etc/snips.toml
 fi
 
-if [[ ! -f "$USERDIR/ProjectAlice/shell/snipsSuperTTS.sh" ]]; then
-    cp ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sample.sh ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+if [[ ! -f "$USERDIR/ProjectAlice/system/scripts/snipsSuperTTS.sh" ]]; then
+    cp ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sample.sh ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 fi
 
 sed -i -e 's/\# retry_count = 3/retry_count = 0/' /etc/snips.toml
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
 	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "amazon", "%%LANG%%", "US", "Joanna", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/system\/scripts\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "amazon", "%%LANG%%", "US", "Joanna", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
 elif [[ "$ttsService" == "google" ]]; then
 	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "google", "%%LANG%%", "US", "Wavenet-C", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/system\/scripts\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "google", "%%LANG%%", "US", "Wavenet-C", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
 elif [[ "$ttsService" == "mycroft" ]]; then
 	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "mycroft", "%%LANG%%", "--", "slt_hts", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/system\/scripts\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "mycroft", "%%LANG%%", "--", "slt_hts", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
 else
 	sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/shell\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "picotts", "%%LANG%%", "--", "--", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
+	sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/system\/scripts\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "picotts", "%%LANG%%", "--", "--", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
 fi
 
 sed -i -e 's/\# bind = "default@mqtt"/bind = "'${siteId}'@mqtt"/' /etc/snips.toml
@@ -568,14 +568,14 @@ grep -qF 'i2c-dev' '/etc/modules' || echo 'i2c-dev' | tee --append '/etc/modules
 grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --append '/boot/config.txt'
 
 if [[ "$ttsService" == "offline" ]]; then
-	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 elif [[ "$ttsService" == "mycroft" || "$installMycroft" == "y" ]]; then
-	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
-	sed -i -e 's/#googleWavenetAPIKey=%WAVENET_CREDENTIALS/googleWavenetAPIKey="'${googleWavenetAPIKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/#googleWavenetAPIKey=%WAVENET_CREDENTIALS/googleWavenetAPIKey="'${googleWavenetAPIKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 fi
-sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 
 pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements.txt
 
@@ -590,14 +590,14 @@ chown -R ${USER} ${USERDIR}/ProjectAlice
 chown -R _snips ${USERDIR}/ProjectAlice/cache
 chmod 775 ${USERDIR}/ProjectAlice/cache
 
-ln -sfn ${USERDIR}/ProjectAlice/assistants/assistant_${snipsLang} ${USERDIR}/ProjectAlice/assistant
-ln -sfn ${USERDIR}/ProjectAlice/sounds/${snipsLang}/start_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/start_of_input.wav
-ln -sfn ${USERDIR}/ProjectAlice/sounds/${snipsLang}/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
-ln -sfn ${USERDIR}/ProjectAlice/sounds/${snipsLang}/error.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/error.wav
+ln -sfn ${USERDIR}/ProjectAlice/trained/assistants/assistant_${snipsLang} ${USERDIR}/ProjectAlice/assistant
+ln -sfn ${USERDIR}/ProjectAlice/alice/system/sounds/${snipsLang}/start_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/start_of_input.wav
+ln -sfn ${USERDIR}/ProjectAlice/alice/system/sounds/${snipsLang}/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
+ln -sfn ${USERDIR}/ProjectAlice/alice/system/sounds/${snipsLang}/error.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/error.wav
 
-chmod 755 ${USERDIR}/ProjectAlice/shell/langSwitch.sh
-chmod 755 ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-chmod 755 ${USERDIR}/ProjectAlice/shell/switchTTSOnlineState.sh
+chmod 755 ${USERDIR}/ProjectAlice/system/scripts/langSwitch.sh
+chmod 755 ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+chmod 755 ${USERDIR}/ProjectAlice/system/scripts/switchTTSOnlineState.sh
 
 if [[ "$installSamba" == "y" ]]; then
     apt-get install -y samba
@@ -622,10 +622,10 @@ if [[ "$installSLC" == "y" ]]; then
 fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
-	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
-	sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/shell/snipsSuperTTS.sh
+	sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+	sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+	sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+	sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 
 	cd ${USERDIR}
 	curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
