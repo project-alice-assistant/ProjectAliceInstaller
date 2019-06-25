@@ -461,6 +461,7 @@ echo -e "\e[33mSmoking guns...\e[0m"
 sleep 2s
 
 bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list'
+sed -i -e 's/snips.ai\/buster/snips.ai\/stretch/' /etc/apt/sources.list.d/snips.list
 apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
 apt-get update
 apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch snips-tts
