@@ -169,34 +169,11 @@ case "$choice" in
         ;;
 esac
 
-if [[ "$installMode" == 1 ]]
-then
+if [[ "$installMode" == 1 ]]; then
     echo
     echo -e "\e[33mOk, so this device is going to be my main unit, my home\e[0m"
     read -e -p $'\e[33mIn what room are you going to place my main unit? \e[0m' -i 'living-room' siteId
     siteId=${siteId/_/ /.}
-    read -p $'\e[33mDo you want me to enable sound playback and record (y/n)? \e[0m' choice
-    case "$choice" in
-        n|N)
-            enableAudio=0
-            echo -e "\e[32mSound disabled\e[0m"
-            ;;
-        *)
-            enableAudio=1
-            echo -e "\e[32mSound enabled\e[0m"
-            read -p $'\e[33mDo you want me to install my audio device (y/n)? \e[0m' choice
-            case "$choice" in
-                y|Y)
-                    echo -e "\e[32mOk, let's do this first\e[0m"
-                    chmod +x ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
-                    ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
-                    ;;
-                *)
-                    echo -e "\e[31mOk, i'll let that to you if needed\e[0m"
-                    ;;
-            esac
-            ;;
-    esac
 fi
 
 
@@ -343,17 +320,42 @@ case "$choice" in
         ;;
 esac
 
-read -p $'\e[33mPulseaudio can significantly improve the audio quality, do you want to install it (y/n)? \e[0m' choice
-case "$choice" in
-    y|Y)
-        installPulseAudio='y'
-        echo -e "\e[32myes\e[0m"
-        ;;
-    *)
-        installPulseAudio='n'
-        echo -e "\e[32mOk! No problem!\e[0m"
-        ;;
-esac
+if [[ "$installMode" == 1 ]]; then
+    read -p $'\e[33mDo you want me to enable sound playback and record (y/n)? \e[0m' choice
+    case "$choice" in
+        n|N)
+            enableAudio=0
+            echo -e "\e[32mSound disabled\e[0m"
+            ;;
+        *)
+            enableAudio=1
+            echo -e "\e[32mSound enabled\e[0m"
+            read -p $'\e[33mDo you want me to install my audio device (y/n)? \e[0m' choice
+            case "$choice" in
+                y|Y)
+                    echo -e "\e[32mOk, let's do that!\e[0m"
+                    chmod +x ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
+                    ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
+                    ;;
+                *)
+                    echo -e "\e[31mOk, i'll let that to you if needed\e[0m"
+                    ;;
+            esac
+            echo
+            read -p $'\e[33mPulseaudio can significantly improve the audio quality, do you want to install it (y/n)? \e[0m' choice
+            case "$choice" in
+                y|Y)
+                    installPulseAudio='y'
+                    echo -e "\e[32myes\e[0m"
+                    ;;
+                *)
+                    installPulseAudio='n'
+                    echo -e "\e[32mOk! No problem!\e[0m"
+                    ;;
+            esac
+            ;;
+    esac
+fi
 
 read -p $'\e[33mDo you have leds on my main unit? Like leds I could control? If so, I can install Snips Led Control for that! (y/n)? \e[0m' choice
 case "$choice" in
@@ -620,6 +622,8 @@ if [[ "$installSLC" == "y" ]]; then
 	./slc_download.sh
 	
 	systemctl is-active -q snipsledcontrol && systemctl stop snipsledcontrol && systemctl disable snipsledcontrol
+	systemctl is-active -q seeed-voicecard && systemctl stop seeed-voicecard && systemctl disable seeed-voicecard
+
 fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
