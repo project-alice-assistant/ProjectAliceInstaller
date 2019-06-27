@@ -457,7 +457,7 @@ fi
 
 mv ${USERDIR}/ProjectAlice/ProjectAlice.service /etc/systemd/system
 
-apt-get install -y apt-transport-https zip unzip mpg123 dirmngr python3-pip gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev flac subversion
+apt-get install -y apt-transport-https zip unzip mpg123 dirmngr python3-pip gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev flac
 
 echo -e "\e[33mSmoking guns...\e[0m"
 sleep 2s
