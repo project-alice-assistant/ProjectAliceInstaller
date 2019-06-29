@@ -594,9 +594,9 @@ chown -R _snips ${USERDIR}/ProjectAlice/cache
 chmod 775 ${USERDIR}/ProjectAlice/cache
 
 ln -sfn ${USERDIR}/ProjectAlice/trained/assistants/assistant_${snipsLang} ${USERDIR}/ProjectAlice/assistant
-ln -sfn ${USERDIR}/ProjectAlice/alice/system/sounds/${snipsLang}/start_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/start_of_input.wav
-ln -sfn ${USERDIR}/ProjectAlice/alice/system/sounds/${snipsLang}/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
-ln -sfn ${USERDIR}/ProjectAlice/alice/system/sounds/${snipsLang}/error.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/error.wav
+ln -sfn ${USERDIR}/ProjectAlice/system/sounds/${snipsLang}/start_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/start_of_input.wav
+ln -sfn ${USERDIR}/ProjectAlice/system/sounds/${snipsLang}/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
+ln -sfn ${USERDIR}/ProjectAlice/system/sounds/${snipsLang}/error.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/error.wav
 
 chmod 755 ${USERDIR}/ProjectAlice/system/scripts/langSwitch.sh
 chmod 755 ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
@@ -616,14 +616,15 @@ fi
 if [[ "$installSLC" == "y" ]]; then
 	sed -i -e 's/"useSLC": False/"useSLC": True/' ${USERDIR}/ProjectAlice/config.py
 
+
 	cd ${USERDIR}
 	wget https://gist.githubusercontent.com/Psychokiller1888/a9826f92c5a3c5d03f34d182fda1ce4c/raw/e24882e8997730dcf7a308e303b3b88001dbbfa1/slc_download.sh
 	chmod +x slc_download.sh
 	./slc_download.sh
 	
-	systemctl is-active -q snipsledcontrol && systemctl stop snipsledcontrol && systemctl disable snipsledcontrol
-	systemctl is-active -q seeed-voicecard && systemctl stop seeed-voicecard && systemctl disable seeed-voicecard
-
+	systemctl is-active -q snipsledcontrol && systemctl stop snipsledcontrol
+	systemctl start seeed-voicecard
+	systemctl stop seeed-voicecard && systemctl disable seeed-voicecard
 fi
 
 if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
