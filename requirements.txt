@@ -22,3 +22,4 @@ oauth2client
 SpeechRecognition
 esptool
 pyserial
+selenium
