@@ -16,7 +16,6 @@ Adafruit_MCP9808
 py-translate
 langdetect
 slugify
-wikipedia
 google-api-python-client
 oauth2client
 SpeechRecognition
