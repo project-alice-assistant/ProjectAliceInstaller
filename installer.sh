@@ -155,7 +155,7 @@ case "$choice" in
 		fi
 		
 		if [[ ! -d "$USERDIR/project-alice" ]]; then
-			git clone https://bitbucket.org/Psychokiller1888/project-alice.git
+			git clone --depth=1 https://bitbucket.org/Psychokiller1888/project-alice.git
 		else
 			cd ${USERDIR}/project-alice
 			git stash
