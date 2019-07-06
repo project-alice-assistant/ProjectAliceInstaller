@@ -522,6 +522,7 @@ if [[ ! -f "$USERDIR/ProjectAlice/config.py" ]]; then
 fi
 
 sed -i -e 's/"intentsOwner": ""/"intentsOwner": "'${snipsUsername}'"/' ${USERDIR}/ProjectAlice/config.py
+sed -i -e 's/"activeLanguage": "en"/"activeLanguage": "'${snipsLang}'"/' ${USERDIR}/ProjectAlice/config.py
 sed -i -e 's/"snipsConsoleLogin": ""/"snipsConsoleLogin": "'${snipsLogin}'"/' ${USERDIR}/ProjectAlice/config.py
 sed -i -e 's/"snipsConsolePassword": ""/"snipsConsolePassword": "'${snipsPassword}'"/' ${USERDIR}/ProjectAlice/config.py
 
