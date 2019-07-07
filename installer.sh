@@ -533,8 +533,8 @@ sed -i -e 's/"intentsOwner": ""/"intentsOwner": "'${snipsUsername}'"/' ${USERDIR
 sed -i -e 's/"activeLanguage": "en"/"activeLanguage": "'${snipsLang}'"/' ${USERDIR}/ProjectAlice/config.py
 sed -i -e 's/"snipsConsoleLogin": ""/"snipsConsoleLogin": "'${snipsLogin}'"/' ${USERDIR}/ProjectAlice/config.py
 
-snipsPasswordEsc=$(sed 's/[\*\.&]/\\&/g' <<<"$snipsPassword")
-sed -i -e 's/"snipsConsolePassword": ""/"snipsConsolePassword": "'${snipsPassword}'"/' ${USERDIR}/ProjectAlice/config.py
+snipsPasswordEsc=$(sed 's/[\*\.&]/\\&/g' <<< ${snipsPassword})
+sed -i -e 's/"snipsConsolePassword": ""/"snipsConsolePassword": "'${snipsPasswordEsc}'"/' ${USERDIR}/ProjectAlice/config.py
 
 if [[ "$ttsService" == "offline" ]]; then
 	sed -i -e 's/"keepTTSOffline": False/"keepTTSOffline": True/' ${USERDIR}/ProjectAlice/config.py
