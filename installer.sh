@@ -153,15 +153,23 @@ case "$choice" in
 					exit;;
 			esac
 		fi
-		
-		if [[ ! -d "$USERDIR/project-alice" ]]; then
-			git clone --depth=1 https://bitbucket.org/Psychokiller1888/project-alice.git
-		else
-			cd ${USERDIR}/project-alice
-			git stash
-			git pull
-			git stash apply
-		fi
+
+        rc=1
+		while ${rc} != 0; do
+            if [[ ! -d "$USERDIR/project-alice" ]]; then
+                git clone --depth=1 https://bitbucket.org/Psychokiller1888/project-alice.git
+                rc=$?
+            else
+                cd ${USERDIR}/project-alice
+                git stash
+                git pull
+                rc=$?
+                git stash apply
+            fi
+            if [[ ${rc} != 0 ]]; then
+                read -p $'\e[33mThere seems to be a problem getting the repository, please try again \e[0m' choice
+            fi
+        done
 		
 		cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
 		chown -R ${USER} ${USERDIR}/ProjectAlice
