@@ -155,7 +155,7 @@ case "$choice" in
 		fi
 
         rc=1
-		while ${rc} != 0; do
+		while [[ ${rc} != 0 ]]; do
             if [[ ! -d "$USERDIR/project-alice" ]]; then
                 git clone --depth=1 https://bitbucket.org/Psychokiller1888/project-alice.git
                 rc=$?
@@ -532,6 +532,8 @@ fi
 sed -i -e 's/"intentsOwner": ""/"intentsOwner": "'${snipsUsername}'"/' ${USERDIR}/ProjectAlice/config.py
 sed -i -e 's/"activeLanguage": "en"/"activeLanguage": "'${snipsLang}'"/' ${USERDIR}/ProjectAlice/config.py
 sed -i -e 's/"snipsConsoleLogin": ""/"snipsConsoleLogin": "'${snipsLogin}'"/' ${USERDIR}/ProjectAlice/config.py
+
+snipsPasswordEsc=$(sed 's/[\*\.&]/\\&/g' <<<"$snipsPassword")
 sed -i -e 's/"snipsConsolePassword": ""/"snipsConsolePassword": "'${snipsPassword}'"/' ${USERDIR}/ProjectAlice/config.py
 
 if [[ "$ttsService" == "offline" ]]; then
@@ -618,7 +620,12 @@ if [[ "$installSamba" == "y" ]]; then
     rm -f /etc/samba/smb.conf
     cp ${USERDIR}/ProjectAliceInstaller/samba.sample /etc/samba/smb.conf
 
-    smbpasswd -a ${USER}
+    rc=1
+    while [[ ${rc} != 0 ]]; do
+        smbpasswd -a ${USER}
+        rc=$?
+    done
+
     /etc/init.d/samba restart
 fi
 
