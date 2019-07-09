@@ -180,7 +180,7 @@ esac
 if [[ "$installMode" == 1 ]]; then
     echo
     echo -e "\e[33mOk, so this device is going to be my main unit, my home\e[0m"
-    read -e -p $'\e[33mIn what room are you going to place my main unit? \e[0m' -i 'living-room' siteId
+    read -e -p $'\e[33mIn what room are you going to place my main unit? \e[0m' -i 'default' siteId
     siteId=${siteId/_/ /.}
 fi
 
@@ -190,7 +190,7 @@ echo -e "\e[33mI need your Snips console credentials in order to manage the assi
 read -e -p $'\e[33memail: \e[0m' snipsLogin
 read -e -p $'\e[33mpassword: \e[0m' -s snipsPassword
 echo
-read -e -p $'\e[33mYour console username: \e[0m' -i 'ProjectAlice' snipsUsername
+read -e -p $'\e[33mYour console username: \e[0m' -i 'JohnDoe' snipsUsername
 echo
 echo -e "\e[33mThank you for this, now, let's continue to the real stuff\e[0m"
 echo
@@ -217,8 +217,10 @@ case "$choice" in
         echo -e "\e[31mOk, only Snips ASR\e[0m"
         ;;
     *)
-        installGoogleASR="y"
-        echo -e "\e[32mOk, I will install what's needed\e[0m"
+        #installGoogleASR="y"
+        #echo -e "\e[32mOk, I will install what's needed\e[0m"
+        installGoogleASR="n"
+        echo -e "\e[32mThis is not yet implemented, sorry\e[0m"
         ;;
 esac
 
@@ -328,6 +330,18 @@ case "$choice" in
         ;;
 esac
 
+read -p $'\e[33mDo you have leds on my main unit? Like leds I could control? If so, I can install Snips Led Control for that! (y/n)? \e[0m' choice
+case "$choice" in
+    y|Y)
+        installSLC='y'
+        echo -e "\e[32mOk, I will also let SLC do the audio configuration, remember to say yes when it is asking if you want to install your audio device\e[0m"
+        ;;
+    *)
+        installSLC='n'
+        echo -e "\e[31mOk, no led control...\e[0m"
+        ;;
+esac
+
 if [[ "$installMode" == 1 ]]; then
     read -p $'\e[33mDo you want me to enable sound playback and record (y/n)? \e[0m' choice
     case "$choice" in
@@ -338,17 +352,22 @@ if [[ "$installMode" == 1 ]]; then
         *)
             enableAudio=1
             echo -e "\e[32mSound enabled\e[0m"
-            read -p $'\e[33mDo you want me to install my audio device (y/n)? \e[0m' choice
-            case "$choice" in
-                y|Y)
-                    echo -e "\e[32mOk, let's do that!\e[0m"
-                    chmod +x ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
-                    ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
-                    ;;
-                *)
-                    echo -e "\e[31mOk, i'll let that to you if needed\e[0m"
-                    ;;
-            esac
+
+            if [[ "$installSLC" == "n" ]]; then
+                echo
+                read -p $'\e[33mDo you want me to install my audio device (y/n)? \e[0m' choice
+                case "$choice" in
+                    y|Y)
+                        echo -e "\e[32mOk, let's do that!\e[0m"
+                        chmod +x ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
+                        ${USERDIR}/ProjectAliceInstaller/audioInstaller.sh
+                        ;;
+                    *)
+                        echo -e "\e[31mOk, i'll let that to you if needed\e[0m"
+                        ;;
+                esac
+            fi
+
             echo
             read -p $'\e[33mPulseaudio can significantly improve the audio quality, do you want to install it (y/n)? \e[0m' choice
             case "$choice" in
@@ -364,18 +383,6 @@ if [[ "$installMode" == 1 ]]; then
             ;;
     esac
 fi
-
-read -p $'\e[33mDo you have leds on my main unit? Like leds I could control? If so, I can install Snips Led Control for that! (y/n)? \e[0m' choice
-case "$choice" in
-    y|Y)
-        installSLC='y'
-        echo -e "\e[32myes\e[0m"
-        ;;
-    *)
-        installSLC='n'
-        echo -e "\e[31mOk, no led control...\e[0m"
-        ;;
-esac
 
 FVENV=${USERDIR}'/ProjectAlice/'${VENV}
 
@@ -476,12 +483,6 @@ apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
 apt-get update
 apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch snips-tts
 
-if [[ "$installGoogleASR" == "y" ]]; then
-	apt-get install -y snips-asr-google
-	systemctl stop snips-asr-google
-	systemctl disable snips-asr-google
-fi
-
 systemctl stop snips-*
 systemctl disable snips-asr
 systemctl disable snips-tts
@@ -490,6 +491,10 @@ systemctl disable snips-nlu
 systemctl disable snips-dialogue
 systemctl disable snips-injection
 systemctl disable snips-audio-server
+
+if [[ "$installGoogleASR" == "y" ]]; then
+	pip3.7 install google-cloud-speech
+fi
 
 if [[ "$installPulseAudio" == "y" ]]; then
 	echo -e "\e[33mInstalling Pulseaudio\e[0m"
