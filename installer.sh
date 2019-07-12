@@ -102,6 +102,23 @@ apt-get update
 apt-get dist-upgrade -y
 apt-get install -y git
 
+if [[ -z "$USER" ]]; then
+    echo -e "\e[33mIt's weird, I couldn't detect your username... On what user are you running this device? By default, on a Raspberry Pi, it's 'pi'\e[0m"
+    read -e -p $'\e[33mUser: \e[0m' USER
+
+    USERDIR='/home/'${USER}
+    while [[ ! -d "$USERDIR" ]]; do
+        echo -e "\e[33mNope... Still not ok...\e[0m"
+        read -e -p $'\e[33mUser: \e[0m' USER
+        USERDIR='/home/'${USER}
+    done
+fi
+
+if [[ ! -d "$USERDIR" ]]; then
+    echo -e "\e[33mSorry, I can't access your home directory, I can't install\e[0m"
+    exit
+fi
+
 cd ${USERDIR}
 
 echo
@@ -206,7 +223,6 @@ do
 done
 
 installPython="n"
-optimizePython="n"
 installGoogleASR="n"
 installMycroft="n"
 
@@ -400,33 +416,8 @@ which python3.7 || {
                 echo -e "\e[31mno\e[0m"
                 ;;
         esac
-
-        echo
-
-        read -p $'\e[33mDo you want to optimize Python for my hardware? This can take veeeeeeerrryyyyyyy long (y/n)? \e[0m' choice
-        case "$choice" in
-            y|Y)
-                optimizePython='y'
-                echo -e "\e[32mOk, will do!\e[0m"
-                ;;
-            *)
-                optimizePython='n'
-                echo -e "\e[32mBetter save some time against some perfs, right!\e[0m"
-                ;;
-        esac
     else
-		installPython="y"
-        read -p $'\e[33mI need to install Python 3.7! Do you want to optimize it for my hardware? This can take veeeeeeerrryyyyyyy long (y/n)? \e[0m' choice
-        case "$choice" in
-            y|Y)
-                optimizePython='y'
-                echo -e "\e[32mOk, will do!\e[0m"
-                ;;
-            *)
-                optimizePython='n'
-                echo -e "\e[32mBetter save some time against some perfs, right!\e[0m"
-                ;;
-        esac
+        installPython='y'
     fi
 }
 
@@ -438,11 +429,7 @@ if [[ "$installPython" == "y" ]]; then
     sudo -u ${USER} wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
     sudo -u ${USER} tar xf Python-3.7.3.tar.xz
     cd Python-3.7.3
-    if [[ "$optimizePython" == "y" ]]; then
-        ./configure --enable-optimizations
-    else
-        ./configure
-    fi
+    ./configure
     make -j -l 4
     make altinstall
     cd ..
