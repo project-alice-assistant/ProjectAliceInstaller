@@ -435,7 +435,7 @@ if [[ "$installPython" == "y" ]]; then
     cd ..
     rm -rf Python-3.7.3
     rm Python-3.7.3.tar.xz
-    pip3.7 install --upgrade pip
+    sudo -u ${USER} pip3.7 install --upgrade pip
 
     if [[ -d "$FVENV" ]]; then
         rm -rf ${FVENV}
@@ -446,7 +446,7 @@ fi
 
 if [[ ! -d "$FVENV" ]]; then
     echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
-    pip3.7 install virtualenv
+    sudo -u ${USER} pip3.7 install virtualenv
     pythonPath=`which python3.7`
     virtualenv -p ${pythonPath} ${FVENV}
 fi
@@ -459,7 +459,7 @@ fi
 
 mv ${USERDIR}/ProjectAlice/ProjectAlice.service /etc/systemd/system
 
-apt-get install -y apt-transport-https zip unzip mpg123 dirmngr python3-pip gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev flac chromium-driver
+apt-get install -y apt-transport-https zip unzip mpg123 dirmngr gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev flac chromium-driver
 
 echo -e "\e[33mSmoking guns...\e[0m"
 sleep 2s
@@ -480,7 +480,7 @@ systemctl disable snips-injection
 systemctl disable snips-audio-server
 
 if [[ "$installGoogleASR" == "y" ]]; then
-	pip3.7 install google-cloud-speech
+	sudo -u ${USER} pip3.7 install google-cloud-speech
 fi
 
 if [[ "$installPulseAudio" == "y" ]]; then
@@ -583,7 +583,7 @@ elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
 fi
 sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 
-pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements.txt
+sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements.txt
 
 echo -e "\e[33mCatching breath...\e[0m"
 sleep 2s
