@@ -430,7 +430,8 @@ if [[ "$installPython" == "y" ]]; then
     sudo -u ${USER} tar xf Python-3.7.3.tar.xz
     cd Python-3.7.3
     ./configure
-    make -j -l 4
+    cores=$(nproc)
+    make -j -l $cores
     make altinstall
     cd ..
     rm -rf Python-3.7.3
