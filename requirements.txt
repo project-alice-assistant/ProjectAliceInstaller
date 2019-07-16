@@ -21,3 +21,4 @@ SpeechRecognition
 esptool
 pyserial
 selenium
+PyGithub

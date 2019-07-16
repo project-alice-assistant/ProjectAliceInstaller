@@ -313,7 +313,7 @@ case "$choice" in
         ;;
     *)
         echo -e "\e[32mOk, only offline TTS\e[0m"
-		ttsService="offline"
+		ttsService="pico"
         ;;
 esac
 
@@ -526,10 +526,12 @@ sed -i -e 's/"intentsOwner": ""/"intentsOwner": "'${snipsUsername}'"/' ${USERDIR
 sed -i -e 's/"activeLanguage": "en"/"activeLanguage": "'${snipsLang}'"/' ${USERDIR}/ProjectAlice/config.py
 sed -i -e 's/"snipsConsoleLogin": ""/"snipsConsoleLogin": "'${snipsLogin}'"/' ${USERDIR}/ProjectAlice/config.py
 
+sed -i -e 's/"tts": "pico"/"tts": "'${ttsService}'"/' ${USERDIR}/ProjectAlice/config.py
+
 snipsPasswordEsc=$(sed 's/[\*\.&]/\\&/g' <<< ${snipsPassword})
 sed -i -e 's/"snipsConsolePassword": ""/"snipsConsolePassword": "'${snipsPasswordEsc}'"/' ${USERDIR}/ProjectAlice/config.py
 
-if [[ "$ttsService" == "offline" ]]; then
+if [[ "$ttsService" == "pico" ]]; then
 	sed -i -e 's/"keepTTSOffline": False/"keepTTSOffline": True/' ${USERDIR}/ProjectAlice/config.py
 fi
 
@@ -574,7 +576,7 @@ grep -qF 'dtparam=i2c_arm=on' '/boot/config.txt' || echo 'dtparam=i2c_arm=on' | 
 grep -qF 'i2c-dev' '/etc/modules' || echo 'i2c-dev' | tee --append '/etc/modules'
 grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --append '/boot/config.txt'
 
-if [[ "$ttsService" == "offline" ]]; then
+if [[ "$ttsService" == "pico" ]]; then
 	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 elif [[ "$ttsService" == "mycroft" || "$installMycroft" == "y" ]]; then
 	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
