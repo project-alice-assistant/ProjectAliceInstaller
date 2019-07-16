@@ -22,5 +22,4 @@ esptool
 pyserial
 selenium
 PyGithub
-SoundFile
-numpy
+pydub
