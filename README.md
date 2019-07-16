@@ -11,6 +11,7 @@ sudo ./ProjectAlice.sh
 ```
 
 ## If you are interested to be a tester:
+- **This is a closed sources project at the moment**. You are not allowed to share the sources, as a whole or parts of it. You will need to electronically sign an NDA
 - We are in a state where using still requires some thinkering. Do not apply is you are not ready to spend time on making stuff work for you.
 - Not all featured Project Alice are implemented yet and many still need work
 - You have general knowledge about linux, dependencies, system configuration, git, bash
