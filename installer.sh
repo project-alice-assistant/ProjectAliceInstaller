@@ -160,24 +160,40 @@ checkExistingInstallAndDL() {
 
     rc=1
 	while [[ ${rc} != 0 ]]; do
-        if [[ ! -d "$USERDIR/project-alice" ]]; then
-        	if [[ "$type" == "sat" ]]; then
-        		cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
+        if [[ "$type" == "sat" ]]; then
+        	if [[ -d "$USERDIR/satellite" ]]; then
+				cd ${USERDIR}/satellite
+				git stash
+				git pull
+				rc=$?
+				git stash apply
         	else
-        		cloneUrl="https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git"
-        	fi
-
-           	git clone --depth=1 cloneUrl
-            rc=$?
+				cloneUrl="https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git"
+				git init satellite
+				cd satellite
+				git remote add origin ${cloneUrl}
+				git config core.sparsecheckout true
+				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
+				git pull --depth=1 origin master
+				rc=$?
+			fi
         else
-            cd ${USERDIR}/project-alice
-            git stash
-            git pull
-            rc=$?
-            git stash apply
+        	if [[ -d "$USERDIR/project-alice" ]]; then
+        		cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
+        		git clone --depth=1 ${cloneUrl}
+        		rc=$?
+        	else
+        		cd ${USERDIR}/project-alice
+        		git stash
+        		git pull
+        		rc=$?
+        		git stash apply
+        	fi
         fi
+
         if [[ ${rc} != 0 ]]; then
             read -p $'\e[33mThere seems to be a problem getting the repository, please try again \e[0m' choice
+            exit
         fi
     done
 
@@ -193,9 +209,7 @@ case "$choice" in
     s|S)
         echo -e "\e[32mSatellite, ok, let me download the required files\e[0m"
         checkExistingInstallAndDL sat
-
-
-
+        echo -e "\e[32mPsycho is not yet finished with this... Sorry\e[0m"
         ;;
     *)
         echo -e "\e[32mMain unit, ok, let me download the required files\e[0m"
