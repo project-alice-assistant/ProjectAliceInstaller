@@ -1,0 +1,9 @@
+smbus2
+paho_mqtt
+pytoml
+enum34
+Adafruit-MCP9808
+apds9960
+bme680
+bme280
+Adafruit_BMP

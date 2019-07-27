@@ -87,13 +87,14 @@ echo -e "\e[100;33m================================================\e[0m"
 echo
 
 if [[ "$EUID" -ne 0 ]]; then
-    echo -e "\e[31mPlease run with sudo\e[0m"
-    exit
+	echo -e "\e[31mPlease run with sudo\e[0m"
+	exit
 fi
 
 # Commands that you don't want to run with root would be invoked with: sudo -u $real_user
 USER=$(logname)
 USERDIR='/home/'${USER}
+escaped=${USERDIR//\//\\/}
 
 systemctl is-active -q ProjectAlice && systemctl stop ProjectAlice
 
@@ -103,20 +104,20 @@ apt-get dist-upgrade -y
 apt-get install -y git
 
 if [[ -z "$USER" ]]; then
-    echo -e "\e[33mIt's weird, I couldn't detect your username... On what user are you running this device? By default, on a Raspberry Pi, it's 'pi'\e[0m"
-    read -e -p $'\e[33mUser: \e[0m' USER
+	echo -e "\e[33mIt's weird, I couldn't detect your username... On what user are you running this device? By default, on a Raspberry Pi, it's 'pi'\e[0m"
+	read -e -p $'\e[33mUser: \e[0m' USER
 
-    USERDIR='/home/'${USER}
-    while [[ ! -d "$USERDIR" ]]; do
-        echo -e "\e[33mNope... Still not ok...\e[0m"
-        read -e -p $'\e[33mUser: \e[0m' USER
-        USERDIR='/home/'${USER}
-    done
+	USERDIR='/home/'${USER}
+	while [[ ! -d "$USERDIR" ]]; do
+		echo -e "\e[33mNope... Still not ok...\e[0m"
+		read -e -p $'\e[33mUser: \e[0m' USER
+		USERDIR='/home/'${USER}
+	done
 fi
 
 if [[ ! -d "$USERDIR" ]]; then
-    echo -e "\e[33mSorry, I can't access your home directory, I can't install\e[0m"
-    exit
+	echo -e "\e[33mSorry, I can't access your home directory, I can't install\e[0m"
+	exit
 fi
 
 checkExistingInstallAndDL() {
@@ -158,47 +159,160 @@ checkExistingInstallAndDL() {
 		esac
 	fi
 
-    rc=1
+	rc=1
 	while [[ ${rc} != 0 ]]; do
-        if [[ "$type" == "sat" ]]; then
-        	if [[ -d "$USERDIR/satellite" ]]; then
+		if [[ "$type" == 'sat' ]]; then
+			if [[ -d ${USERDIR}/satellite ]]; then
 				cd ${USERDIR}/satellite
 				git stash
 				git pull
 				rc=$?
 				git stash apply
-        	else
+			else
 				cloneUrl="https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git"
-				git init satellite
-				cd satellite
+				git init ${USERDIR}/satellite
+				cd ${USERDIR}/satellite
 				git remote add origin ${cloneUrl}
 				git config core.sparsecheckout true
 				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
 				git pull --depth=1 origin master
 				rc=$?
 			fi
-        else
-        	if [[ -d "$USERDIR/project-alice" ]]; then
-        		cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
-        		git clone --depth=1 ${cloneUrl}
-        		rc=$?
-        	else
-        		cd ${USERDIR}/project-alice
-        		git stash
-        		git pull
-        		rc=$?
-        		git stash apply
-        	fi
-        fi
+		else
+			if [[ -d ${USERDIR}/project-alice ]]; then
+				cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
+				git clone --depth=1 ${cloneUrl}
+				rc=$?
+			else
+				cd ${USERDIR}/project-alice
+				git stash
+				git pull
+				rc=$?
+				git stash apply
+			fi
+		fi
 
-        if [[ ${rc} != 0 ]]; then
-            read -p $'\e[33mThere seems to be a problem getting the repository, please try again \e[0m' choice
-            exit
-        fi
-    done
+		if [[ ${rc} != 0 ]]; then
+			read -p $'\e[33mThere seems to be a problem getting the sources, please try again\e[0m' choice
+			exit
+		else
+			if [[ ${type} == 'sat' ]]; then
+				cp -rf ${USERDIR}/satellite ${USERDIR}/ProjectAlice
+			else
+				cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
+			fi
+		fi
+		chown -R ${USER} ${USERDIR}/ProjectAlice
+	done
+}
 
-	cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
-	chown -R ${USER} ${USERDIR}/ProjectAlice
+checkAndInstallPython() {
+	FVENV=${USERDIR}'/ProjectAlice/'${VENV}
+
+	which python3.7 || {
+		if [[ -d "$FVENV" ]]; then
+			echo
+			read -p $'\e[33mVirtual environment found but Python 3.7 was not detected on your system. Do you want to install Python 3.7 (y/n)? \e[0m' choice
+			case "$choice" in
+				y|Y)
+					installPython='y'
+					echo -e "\e[32myes\e[0m"
+					;;
+				*)
+					installPython='n'
+					echo -e "\e[31mno\e[0m"
+					;;
+			esac
+		else
+			installPython='y'
+		fi
+	}
+
+	if [[ "$installPython" == "y" ]]; then
+		echo -e "\e[33mInstalling Python 3.7... This will take a while...\e[0m"
+		apt install -y libffi-dev libbz2-dev liblzma-dev libsqlite3-dev libncurses5-dev libgdbm-dev zlib1g-dev libreadline-dev libssl-dev tk-dev build-essential libncursesw5-dev libc6-dev openssl
+		cd ${USERDIR}
+		sudo -u ${USER} wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
+		sudo -u ${USER} tar xf Python-3.7.3.tar.xz
+		cd Python-3.7.3
+		./configure
+		cores=$(nproc)
+		make -j -l ${cores}
+		make altinstall
+		cd ..
+		rm -rf Python-3.7.3
+		rm Python-3.7.3.tar.xz
+		sudo -u ${USER} pip3.7 install --upgrade pip
+
+		if [[ -d "$FVENV" ]]; then
+			rm -rf ${FVENV}
+		fi
+		echo -e "\e[33mCooling down!\e[0m"
+		sleep 2s
+	fi
+
+	if [[ ! -d "$FVENV" ]]; then
+		echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
+		sudo -u ${USER} pip3.7 install virtualenv
+		pythonPath=`which python3.7`
+		virtualenv -p ${pythonPath} ${FVENV}
+	fi
+
+	. ${FVENV}/bin/activate
+
+	echo -e "\e[33mSmoking guns...\e[0m"
+	sleep 2s
+}
+
+moveServiceFile() {
+	if [[ -f /etc/systemd/system/ProjectAlice.service ]]; then
+		rm /etc/systemd/system/ProjectAlice.service
+	fi
+
+	mv ${USERDIR}/ProjectAlice/ProjectAlice.service /etc/systemd/system
+
+	sed -i -e 's/\#WORKINGDIR/WorkingDirectory='${escaped}'\/ProjectAlice/' /etc/systemd/system/ProjectAlice.service
+	sed -i -e 's/\#EXECSTART/ExecStart='${escaped}'\/ProjectAlice\/venv\/bin\/python3.7 main.py/' /etc/systemd/system/ProjectAlice.service
+	sed -i -e 's/\#USER/User='${USER}'/' /etc/systemd/system/ProjectAlice.service
+}
+
+installSnips() {
+	type=$1
+	bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list'
+	sed -i -e 's/snips.ai\/buster/snips.ai\/stretch/' /etc/apt/sources.list.d/snips.list
+	apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
+	apt-get update
+
+	if [[ ${type} == 'main' ]]; then
+		apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch snips-tts
+		systemctl stop snips-*
+		systemctl disable snips-asr
+		systemctl disable snips-tts
+		systemctl disable snips-nlu
+		systemctl disable snips-dialogue
+		systemctl disable snips-injection
+	else
+		apt-get install -y --allow-unauthenticated snips-hotword-model-heysnipsv4 snips-satellite
+		systemctl stop snips-*
+	fi
+
+	systemctl disable snips-hotword
+	systemctl disable snips-audio-server
+}
+
+installSLC() {
+	if [[ ${installSLC} == 'y' ]]; then
+		sed -i -e 's/"useSLC": False/"useSLC": True/' ${USERDIR}/ProjectAlice/config.py
+
+		cd ${USERDIR}
+		wget https://gist.githubusercontent.com/Psychokiller1888/a9826f92c5a3c5d03f34d182fda1ce4c/raw/e24882e8997730dcf7a308e303b3b88001dbbfa1/slc_download.sh
+		chmod +x slc_download.sh
+		./slc_download.sh
+
+		systemctl is-active -q snipsledcontrol && systemctl stop snipsledcontrol
+		systemctl start seeed-voicecard
+		systemctl stop seeed-voicecard && systemctl disable seeed-voicecard
+	fi
 }
 
 cd ${USERDIR}
@@ -206,13 +320,43 @@ cd ${USERDIR}
 echo
 read -p $'\e[33mIs this device going to be a (m)ain unit or a (s)atelitte? \e[0m' choice
 case "$choice" in
-    s|S)
-        echo -e "\e[32mSatellite, ok, let me download the required files\e[0m"
-        checkExistingInstallAndDL sat
-        echo -e "\e[32mPsycho is not yet finished with this... Sorry\e[0m"
-        ;;
-    *)
-        echo -e "\e[32mMain unit, ok, let me download the required files\e[0m"
+	s|S)
+		echo -e "\e[32mSatellite, ok, let me download the required files\e[0m"
+		checkExistingInstallAndDL sat
+
+		read -p $'\e[33mDo you have leds on this device? Like leds I could control? If so, I can install Snips Led Control for that! (y/n)? \e[0m' choice
+		case "$choice" in
+			y|Y)
+				installSLC='y'
+				echo -e "\e[32mOk, I will install SLC!\e[0m"
+				;;
+			*)
+				installSLC='n'
+				echo -e "\e[31mOk, no distraction!\e[0m"
+				;;
+		esac
+
+		apt-get mosquitto mosquitto-clients dirmgr install -y build-essential python-dev git scons swig libasound2-plugin-equal
+
+		checkAndInstallPython
+
+		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements_sat.txt
+		sed -i -e "\$aenable_uart=1" /boot/config.txt
+
+		moveServiceFile
+		installSnips sat
+
+		cd ${USERDIR}
+		git clone https://github.com/jgarff/rpi_ws281x.git
+		cd rpi_ws281x
+		scons
+		cd python
+		python setup.py install
+
+		installSLC
+		;;
+	*)
+		echo -e "\e[32mMain unit, ok, let me download the required files\e[0m"
 		checkExistingInstallAndDL main
 		echo
 		echo -e "\e[33mOk, so this device is going to be my main unit, my home\e[0m"
@@ -250,10 +394,8 @@ case "$choice" in
 				echo -e "\e[31mOk, only Snips ASR\e[0m"
 				;;
 			*)
-				#installGoogleASR="y"
-				#echo -e "\e[32mOk, I will install what's needed\e[0m"
-				installGoogleASR="n"
-				echo -e "\e[32mThis is not yet implemented, sorry\e[0m"
+				installGoogleASR="y"
+				echo -e "\e[32mOk, I will install what's needed\e[0m"
 				;;
 		esac
 
@@ -415,85 +557,11 @@ case "$choice" in
 				;;
 		esac
 
-		FVENV=${USERDIR}'/ProjectAlice/'${VENV}
-
-		which python3.7 || {
-			if [[ -d "$FVENV" ]]; then
-				echo
-				read -p $'\e[33mVirtual environment found but Python 3.7 was not detected on your system. Do you need to install Python 3.7 as required (y/n)? \e[0m' choice
-				case "$choice" in
-					y|Y)
-						installPython='y'
-						echo -e "\e[32myes\e[0m"
-						;;
-					*)
-						installPython='n'
-						echo -e "\e[31mno\e[0m"
-						;;
-				esac
-			else
-				installPython='y'
-			fi
-		}
-
-
-		if [[ "$installPython" == "y" ]]; then
-			echo -e "\e[33mInstalling Python 3.7... This will take a while...\e[0m"
-			apt install -y libffi-dev libbz2-dev liblzma-dev libsqlite3-dev libncurses5-dev libgdbm-dev zlib1g-dev libreadline-dev libssl-dev tk-dev build-essential libncursesw5-dev libc6-dev openssl
-			cd ${USERDIR}
-			sudo -u ${USER} wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
-			sudo -u ${USER} tar xf Python-3.7.3.tar.xz
-			cd Python-3.7.3
-			./configure
-			cores=$(nproc)
-			make -j -l ${cores}
-			make altinstall
-			cd ..
-			rm -rf Python-3.7.3
-			rm Python-3.7.3.tar.xz
-			sudo -u ${USER} pip3.7 install --upgrade pip
-
-			if [[ -d "$FVENV" ]]; then
-				rm -rf ${FVENV}
-			fi
-			echo -e "\e[33mCooling down!\e[0m"
-			sleep 2s
-		fi
-
-		if [[ ! -d "$FVENV" ]]; then
-			echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
-			sudo -u ${USER} pip3.7 install virtualenv
-			pythonPath=`which python3.7`
-			virtualenv -p ${pythonPath} ${FVENV}
-		fi
-
-		. ${FVENV}/bin/activate
-
-		if [[ -f /etc/systemd/system/ProjectAlice.service ]]; then
-			rm /etc/systemd/system/ProjectAlice.service
-		fi
-
-		mv ${USERDIR}/ProjectAlice/ProjectAlice.service /etc/systemd/system
-
 		apt-get install -y apt-transport-https zip unzip mpg123 dirmngr gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev flac chromium-driver
 
-		echo -e "\e[33mSmoking guns...\e[0m"
-		sleep 2s
-
-		bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list'
-		sed -i -e 's/snips.ai\/buster/snips.ai\/stretch/' /etc/apt/sources.list.d/snips.list
-		apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
-		apt-get update
-		apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch snips-tts
-
-		systemctl stop snips-*
-		systemctl disable snips-asr
-		systemctl disable snips-tts
-		systemctl disable snips-hotword
-		systemctl disable snips-nlu
-		systemctl disable snips-dialogue
-		systemctl disable snips-injection
-		systemctl disable snips-audio-server
+		checkAndInstallPython
+		moveServiceFile
+		installSnips main
 
 		if [[ "$installGoogleASR" == "y" ]]; then
 			sudo -u ${USER} pip3.7 install google-cloud-speech
@@ -525,11 +593,6 @@ case "$choice" in
 			sed -i -e 's/; default-fragments = 4/default-fragments = 5/' /etc/pulse/daemon.conf
 			sed -i -e 's/; default-fragments-size-msec = 25/default-fragments-size-msec = 2/' /etc/pulse/daemon.conf
 		fi
-
-		escaped=${USERDIR//\//\\/}
-		sed -i -e 's/\#WORKINGDIR/WorkingDirectory='${escaped}'\/ProjectAlice/' /etc/systemd/system/ProjectAlice.service
-		sed -i -e 's/\#EXECSTART/ExecStart='${escaped}'\/ProjectAlice\/venv\/bin\/python3.7 main.py/' /etc/systemd/system/ProjectAlice.service
-		sed -i -e 's/\#USER/User='${USER}'/' /etc/systemd/system/ProjectAlice.service
 
 		sed -i -e 's/\# assistant = "\/usr\/share\/snips\/assistant"/assistant = "'${escaped}'\/ProjectAlice\/assistant"/' /etc/snips.toml
 
@@ -601,12 +664,11 @@ case "$choice" in
 		fi
 		sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 
-		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements.txt
+		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements_main.txt
 
 		echo -e "\e[33mCatching breath...\e[0m"
 		sleep 2s
 
-		mkdir ${USERDIR}/ProjectAlice/logs
 		mkdir -p ${USERDIR}/ProjectAlice/cache
 		mkdir -m 1777 /share
 
@@ -639,19 +701,7 @@ case "$choice" in
 			/etc/init.d/samba restart
 		fi
 
-		if [[ "$installSLC" == "y" ]]; then
-			sed -i -e 's/"useSLC": False/"useSLC": True/' ${USERDIR}/ProjectAlice/config.py
-
-
-			cd ${USERDIR}
-			wget https://gist.githubusercontent.com/Psychokiller1888/a9826f92c5a3c5d03f34d182fda1ce4c/raw/e24882e8997730dcf7a308e303b3b88001dbbfa1/slc_download.sh
-			chmod +x slc_download.sh
-			./slc_download.sh
-
-			systemctl is-active -q snipsledcontrol && systemctl stop snipsledcontrol
-			systemctl start seeed-voicecard
-			systemctl stop seeed-voicecard && systemctl disable seeed-voicecard
-		fi
+		installSLC
 
 		if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
 			sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
