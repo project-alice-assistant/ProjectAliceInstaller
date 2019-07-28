@@ -143,18 +143,38 @@ checkExistingInstallAndDL() {
 				;;
 			*)
 				echo -e "\e[32mOk, let's try to update!\e[0m"
-				cd ${USERDIR}/project-alice
+
 				git stash
-				git pull
+
+				if [[ ${type} == 'sat' ]]; then
+					cd ${USERDIR}/satellite
+					git pull --depth=1 origin master
+				else
+					cd ${USERDIR}/project-alice
+					git pull --depth=1
+				fi
+
+				rc=$?
+
+				if [[ ${rc} != 0 ]]; then
+					read -p $'\e[33mThere seems to be a problem getting the sources, please try again\e[0m' choice
+					exit
+				fi
+
 				git stash apply
 
 				cp ${USERDIR}/ProjectAlice/config.py ${USERDIR}/ProjectAlice/config.bkp
-				cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
+
+				if [[ ${type} == 'sat' ]]; then
+					cp -rf ${USERDIR}/satellite/ProjectAlice/satellite ${USERDIR}/ProjectAlice
+				else
+					cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
+				fi
+
 				chown -R ${USER} ${USERDIR}/ProjectAlice
 				cp ${USERDIR}/ProjectAlice/config.bkp ${USERDIR}/ProjectAlice/config.py
 				echo
 				read -p $'\e[33mI have updated your installation to the latest sources available. Press a key to exit \e[0m' choice
-				systemctl start ProjectAlice
 				exit;;
 		esac
 	fi
@@ -165,7 +185,7 @@ checkExistingInstallAndDL() {
 			if [[ -d ${USERDIR}/satellite ]]; then
 				cd ${USERDIR}/satellite
 				git stash
-				git pull
+				git pull --depth=1 origin master
 				rc=$?
 				git stash apply
 			else
@@ -197,7 +217,7 @@ checkExistingInstallAndDL() {
 			exit
 		else
 			if [[ ${type} == 'sat' ]]; then
-				cp -rf ${USERDIR}/satellite ${USERDIR}/ProjectAlice
+				cp -rf ${USERDIR}/satellite/ProjectAlice/satellite ${USERDIR}/ProjectAlice
 			else
 				cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
 			fi
@@ -223,6 +243,7 @@ checkAndInstallPython() {
 					echo -e "\e[31mno\e[0m"
 					;;
 			esac
+			chown -R pi ${FVENV}
 		else
 			installPython='y'
 		fi
@@ -259,9 +280,6 @@ checkAndInstallPython() {
 	fi
 
 	. ${FVENV}/bin/activate
-
-	echo -e "\e[33mSmoking guns...\e[0m"
-	sleep 2s
 }
 
 moveServiceFile() {
@@ -336,25 +354,13 @@ case "$choice" in
 				;;
 		esac
 
-		apt-get mosquitto mosquitto-clients dirmgr install -y build-essential python-dev git scons swig libasound2-plugin-equal
-
-		cd ${USERDIR}
-		if [[ -d 'rpi_ws281x' ]]; then
-			cd rpi_ws281x
-			git stash
-			git pull
-		else
-			git clone https://github.com/jgarff/rpi_ws281x.git
-			cd rpi_ws281x
-		fi
-
-		scons
-		cd python
-		python setup.py install
+		apt-get install -y mosquitto mosquitto-clients dirmngr build-essential python-dev swig libasound2-plugin-equal
 
 		checkAndInstallPython
 
+		cd ${USERDIR}/ProjectAlice
 		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements_sat.txt
+
 		sed -i -e "\$aenable_uart=1" /boot/config.txt
 
 		moveServiceFile
@@ -570,6 +576,7 @@ case "$choice" in
 		installSnips main
 
 		if [[ "$installGoogleASR" == "y" ]]; then
+			cd ${USERDIR}/ProjectAlice
 			sudo -u ${USER} pip3.7 install google-cloud-speech
 		fi
 
@@ -670,6 +677,7 @@ case "$choice" in
 		fi
 		sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 
+		cd ${USERDIR}/ProjectAlice
 		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements_main.txt
 
 		echo -e "\e[33mCatching breath...\e[0m"
