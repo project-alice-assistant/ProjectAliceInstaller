@@ -338,14 +338,6 @@ case "$choice" in
 
 		apt-get mosquitto mosquitto-clients dirmgr install -y build-essential python-dev git scons swig libasound2-plugin-equal
 
-		checkAndInstallPython
-
-		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements_sat.txt
-		sed -i -e "\$aenable_uart=1" /boot/config.txt
-
-		moveServiceFile
-		installSnips sat
-
 		cd ${USERDIR}
 		if [[ -d 'rpi_ws281t' ]]; then
 			cd rpi_ws281
@@ -360,6 +352,13 @@ case "$choice" in
 		cd python
 		python setup.py install
 
+		checkAndInstallPython
+
+		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements_sat.txt
+		sed -i -e "\$aenable_uart=1" /boot/config.txt
+
+		moveServiceFile
+		installSnips sat
 		installSLC
 		;;
 	*)
