@@ -347,8 +347,15 @@ case "$choice" in
 		installSnips sat
 
 		cd ${USERDIR}
-		git clone https://github.com/jgarff/rpi_ws281x.git
-		cd rpi_ws281x
+		if [[ -d 'rpi_ws281t' ]]; then
+			cd rpi_ws281
+			git stash
+			git pull
+		else
+			git clone https://github.com/jgarff/rpi_ws281x.git
+			cd rpi_ws281x
+		fi
+
 		scons
 		cd python
 		python setup.py install
