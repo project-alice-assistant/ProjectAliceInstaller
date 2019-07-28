@@ -339,8 +339,8 @@ case "$choice" in
 		apt-get mosquitto mosquitto-clients dirmgr install -y build-essential python-dev git scons swig libasound2-plugin-equal
 
 		cd ${USERDIR}
-		if [[ -d 'rpi_ws281t' ]]; then
-			cd rpi_ws281
+		if [[ -d 'rpi_ws281x' ]]; then
+			cd rpi_ws281x
 			git stash
 			git pull
 		else
