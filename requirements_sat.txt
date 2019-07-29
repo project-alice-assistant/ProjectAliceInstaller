@@ -1,9 +1,10 @@
-smbus2
 paho_mqtt
-pytoml
+toml
 enum34
 Adafruit-MCP9808
 apds9960
 bme680
 bme280
 Adafruit_BMP
+pyalsaaudio
+smbus2

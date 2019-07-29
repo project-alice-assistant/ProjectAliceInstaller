@@ -122,21 +122,21 @@ fi
 
 checkExistingInstallAndDL() {
 	type=$1
-	if [[ -d "$USERDIR/ProjectAlice" ]]; then
+	if [[ -d ${USERDIR/ProjectAlice} ]]; then
 		echo
 		read -p $'\e[33mI have found existing directories where I should install. Shall I make a backup (y/n)? \e[0m' choice
-		case "$choice" in
+		case ${choice} in
 			y|Y)
 				echo -e "\e[32mOk, backing them up!\e[0m"
 				today=`date -u`
-				cp ${USERDIR}/ProjectAlice ${USERDIR}/"$today ProjectAliceBackup"
+				cp ${USERDIR}/ProjectAlice ${USERDIR}/${today}"ProjectAliceBackup"
 				;;
 			*)
 				echo -e "\e[32mGone they are!\e[0m"
 				;;
 		esac
 		read -p $'\e[33mDo you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
-		case "$choice" in
+		case ${choice} in
 			i|I)
 				echo -e "\e[32mGetting rid of the demons of the past!\e[0m"
 				rm -rf ${USERDIR}/ProjectAlice
@@ -181,7 +181,7 @@ checkExistingInstallAndDL() {
 
 	rc=1
 	while [[ ${rc} != 0 ]]; do
-		if [[ "$type" == 'sat' ]]; then
+		if [[ ${type} == 'sat' ]]; then
 			if [[ -d ${USERDIR}/satellite ]]; then
 				cd ${USERDIR}/satellite
 				git stash
@@ -229,11 +229,12 @@ checkExistingInstallAndDL() {
 checkAndInstallPython() {
 	FVENV=${USERDIR}'/ProjectAlice/'${VENV}
 
+	installPython='n'
 	which python3.7 || {
-		if [[ -d "$FVENV" ]]; then
+		if [[ -d ${FVENV} ]]; then
 			echo
 			read -p $'\e[33mVirtual environment found but Python 3.7 was not detected on your system. Do you want to install Python 3.7 (y/n)? \e[0m' choice
-			case "$choice" in
+			case ${choice} in
 				y|Y)
 					installPython='y'
 					echo -e "\e[32myes\e[0m"
@@ -249,7 +250,7 @@ checkAndInstallPython() {
 		fi
 	}
 
-	if [[ "$installPython" == "y" ]]; then
+	if [[ ${installPython} == 'y' ]]; then
 		echo -e "\e[33mInstalling Python 3.7... This will take a while...\e[0m"
 		apt install -y libffi-dev libbz2-dev liblzma-dev libsqlite3-dev libncurses5-dev libgdbm-dev zlib1g-dev libreadline-dev libssl-dev tk-dev build-essential libncursesw5-dev libc6-dev openssl
 		cd ${USERDIR}
@@ -265,15 +266,16 @@ checkAndInstallPython() {
 		rm Python-3.7.3.tar.xz
 		sudo -u ${USER} pip3.7 install --upgrade pip
 
-		if [[ -d "$FVENV" ]]; then
+		if [[ -d ${FVENV} ]]; then
 			rm -rf ${FVENV}
 		fi
 		echo -e "\e[33mCooling down!\e[0m"
 		sleep 2s
 	fi
 
-	if [[ ! -d "$FVENV" ]]; then
+	if [[ ! -d ${FVENV} ]]; then
 		echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
+		sudo -u ${USER} pip3.7 install --upgrade pip
 		sudo -u ${USER} pip3.7 install virtualenv
 		pythonPath=`which python3.7`
 		virtualenv -p ${pythonPath} ${FVENV}
@@ -309,13 +311,13 @@ installSnips() {
 		systemctl disable snips-nlu
 		systemctl disable snips-dialogue
 		systemctl disable snips-injection
+		systemctl disable snips-hotword
+		systemctl disable snips-audio-server
 	else
 		apt-get install -y --allow-unauthenticated snips-hotword-model-heysnipsv4 snips-satellite
 		systemctl stop snips-*
+		systemctl disable snips-satellite
 	fi
-
-	systemctl disable snips-hotword
-	systemctl disable snips-audio-server
 }
 
 installSLC() {
