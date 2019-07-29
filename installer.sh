@@ -329,7 +329,7 @@ installSLC() {
 		chmod +x slc_download.sh
 		./slc_download.sh
 
-		systemctl is-active -q snipsledcontrol && systemctl stop snipsledcontrol
+		systemctl is-active -q snipsledcontrol && systemctl stop snipsledcontrol && systemctl disable snipsledcontrol
 		systemctl start seeed-voicecard
 		systemctl stop seeed-voicecard && systemctl disable seeed-voicecard
 	fi

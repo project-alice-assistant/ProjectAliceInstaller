@@ -7,4 +7,4 @@ bme680
 bme280
 Adafruit_BMP
 pyalsaaudio
-smbus2
+smbus
