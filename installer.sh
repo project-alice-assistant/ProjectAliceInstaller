@@ -234,6 +234,8 @@ checkExistingInstallAndDL() {
 }
 
 checkAndInstallPython() {
+	type=$1
+
 	FVENV=${USERDIR}'/ProjectAlice/'${VENV}
 
 	installPython='n'
@@ -280,13 +282,31 @@ checkAndInstallPython() {
 		sleep 2s
 	fi
 
-	if [[ ! -d ${FVENV} ]]; then
-		echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
-		pip3.7 install --upgrade pip
-		pip3.7 install virtualenv
-		pythonPath=`which python3.7`
-		virtualenv -p ${pythonPath} ${FVENV}
-	fi
+	pythonPath=`which python3.7`
+
+	sudo -u ${USER} bash <<EOF
+		if [[ ! -d ${FVENV} ]]; then
+			echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
+			pip3.7 install --upgrade pip
+			pip3.7 install virtualenv
+
+			virtualenv -p ${pythonPath} ${FVENV}
+			sleep 1s
+			source ${FVENV}/bin/activate
+			sleep 1s
+
+			if [[ ${type} == 'sat' ]]; then
+				pip3 install -r ${USERDIR}/ProjectAliceInstaller/requirements_sat.txt
+			else
+				pip3 install -r ${USERDIR}/ProjectAliceInstaller/requirements_main.txt
+			fi
+		fi
+
+		if [[ ${installGoogleASR} == 'y' ]]; then
+			pip3 install google-cloud-speech
+		fi
+
+EOF
 
 	cd ${USERDIR}/ProjectAlice
 	bash -c "source ${VENV}/bin/activate"
@@ -346,6 +366,11 @@ installSLC() {
 cd ${USERDIR}
 
 echo
+
+installPython="n"
+installGoogleASR="n"
+installMycroft="n"
+
 read -p $'\e[33mIs this device going to be a (m)ain unit or a (s)atelitte? \e[0m' choice
 case "$choice" in
 	s|S)
@@ -366,10 +391,7 @@ case "$choice" in
 
 		apt-get install -y mosquitto mosquitto-clients dirmngr build-essential python-dev swig libasound2-plugin-equal
 
-		checkAndInstallPython
-
-		cd ${USERDIR}/ProjectAlice
-		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements_sat.txt
+		checkAndInstallPython sat
 
 		sed -i -e "\$aenable_uart=1" /boot/config.txt
 
@@ -404,10 +426,6 @@ case "$choice" in
 					echo -e "\e[31mInvalid choice\e[0m";
 			esac
 		done
-
-		installPython="n"
-		installGoogleASR="n"
-		installMycroft="n"
 
 		echo
 		read -p $'\e[33mDo you want to use Google ASR when online (y/n) ? \e[0m' choice
@@ -581,14 +599,9 @@ case "$choice" in
 
 		apt-get install -y apt-transport-https zip unzip mpg123 dirmngr gcc make pkg-config automake libtool libicu-dev libpcre2-dev libasound2-dev portaudio19-dev python-pyaudio python3-pyaudio mosquitto mosquitto-clients libxml2-dev libxslt-dev flac chromium-driver
 
-		checkAndInstallPython
+		checkAndInstallPython main
 		moveServiceFile
 		installSnips main
-
-		if [[ "$installGoogleASR" == "y" ]]; then
-			cd ${USERDIR}/ProjectAlice
-			sudo -u ${USER} pip3.7 install google-cloud-speech
-		fi
 
 		if [[ "$installPulseAudio" == "y" ]]; then
 			echo -e "\e[33mInstalling Pulseaudio\e[0m"
@@ -686,9 +699,6 @@ case "$choice" in
 			sed -i -e 's/#googleWavenetAPIKey=%WAVENET_CREDENTIALS/googleWavenetAPIKey="'${googleWavenetAPIKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 		fi
 		sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-
-		cd ${USERDIR}/ProjectAlice
-		sudo -u ${USER} pip3.7 install -r ${USERDIR}/ProjectAliceInstaller/requirements_main.txt
 
 		echo -e "\e[33mCatching breath...\e[0m"
 		sleep 2s
