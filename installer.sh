@@ -271,7 +271,7 @@ checkAndInstallPython() {
 		cd ..
 		rm -rf Python-3.7.3
 		rm Python-3.7.3.tar.xz
-		sudo -u ${USER} pip3.7 install --upgrade pip
+		pip3.7 install --upgrade pip
 
 		if [[ -d ${FVENV} ]]; then
 			rm -rf ${FVENV}
@@ -282,13 +282,14 @@ checkAndInstallPython() {
 
 	if [[ ! -d ${FVENV} ]]; then
 		echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
-		sudo -u ${USER} pip3.7 install --upgrade pip
-		sudo -u ${USER} pip3.7 install virtualenv
+		pip3.7 install --upgrade pip
+		pip3.7 install virtualenv
 		pythonPath=`which python3.7`
 		virtualenv -p ${pythonPath} ${FVENV}
 	fi
 
-	. ${FVENV}/bin/activate
+	cd ${USERDIR}/ProjectAlice
+	bash -c "source ${VENV}/bin/activate"
 }
 
 moveServiceFile() {
