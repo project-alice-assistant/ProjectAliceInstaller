@@ -1,4 +1,4 @@
-paho_mqtt
+paho-mqtt
 toml
 enum34
 Adafruit-MCP9808

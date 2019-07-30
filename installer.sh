@@ -120,6 +120,52 @@ if [[ ! -d "$USERDIR" ]]; then
 	exit
 fi
 
+
+checkAndUpdateSources() {
+	type=$1
+
+	if [[ ${type} == 'sat' ]]; then
+		if [[ -d ${USERDIR}/satellite ]]; then
+			cd ${USERDIR}/satellite
+			git stash
+			git pull --depth=1 origin master
+			git stash apply
+		else
+			if [[ -d ${USERDIR}/satellite ]]; then
+				cd ${USERDIR}/satellite
+				git stash
+				git pull --depth=1 origin master
+				rc=$?
+				git stash apply
+			else
+				cloneUrl="https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git"
+				git init ${USERDIR}/satellite
+				cd ${USERDIR}/satellite
+				git remote add origin ${cloneUrl}
+				git config core.sparsecheckout true
+				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
+				git pull --depth=1 origin master
+				rc=$?
+			fi
+		fi
+	else
+		if [[ -d ${USERDIR}/project-alice ]]; then
+			cd ${USERDIR}/project-alice
+			git stash
+			git pull
+			rc=$?
+			git stash apply
+		else
+			cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
+			git clone --depth=1 ${cloneUrl}
+			rc=$?
+		fi
+	fi
+
+	return ${rc}
+}
+
+
 checkExistingInstallAndDL() {
 	type=$1
 	if [[ -d ${USERDIR/ProjectAlice} ]]; then
@@ -129,7 +175,7 @@ checkExistingInstallAndDL() {
 			y|Y)
 				echo -e "\e[32mOk, backing them up!\e[0m"
 				today=`date -u`
-				cp ${USERDIR}/ProjectAlice ${USERDIR}/${today}"ProjectAliceBackup"
+				cp -a ${USERDIR}/ProjectAlice ${USERDIR}/"ProjectAliceBackup"${today}
 				;;
 			*)
 				echo -e "\e[32mGone they are!\e[0m"
@@ -144,24 +190,13 @@ checkExistingInstallAndDL() {
 			*)
 				echo -e "\e[32mOk, let's try to update!\e[0m"
 
-				git stash
-
-				if [[ ${type} == 'sat' ]]; then
-					cd ${USERDIR}/satellite
-					git pull --depth=1 origin master
-				else
-					cd ${USERDIR}/project-alice
-					git pull --depth=1
-				fi
-
+				checkAndUpdateSources ${type}
 				rc=$?
 
 				if [[ ${rc} != 0 ]]; then
 					read -p $'\e[33mThere seems to be a problem getting the sources, please try again\e[0m' choice
 					exit
 				fi
-
-				git stash apply
 
 				cp ${USERDIR}/ProjectAlice/config.py ${USERDIR}/ProjectAlice/config.bkp
 
@@ -181,36 +216,8 @@ checkExistingInstallAndDL() {
 
 	rc=1
 	while [[ ${rc} != 0 ]]; do
-		if [[ ${type} == 'sat' ]]; then
-			if [[ -d ${USERDIR}/satellite ]]; then
-				cd ${USERDIR}/satellite
-				git stash
-				git pull --depth=1 origin master
-				rc=$?
-				git stash apply
-			else
-				cloneUrl="https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git"
-				git init ${USERDIR}/satellite
-				cd ${USERDIR}/satellite
-				git remote add origin ${cloneUrl}
-				git config core.sparsecheckout true
-				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
-				git pull --depth=1 origin master
-				rc=$?
-			fi
-		else
-			if [[ -d ${USERDIR}/project-alice ]]; then
-				cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
-				git clone --depth=1 ${cloneUrl}
-				rc=$?
-			else
-				cd ${USERDIR}/project-alice
-				git stash
-				git pull
-				rc=$?
-				git stash apply
-			fi
-		fi
+		checkAndUpdateSources ${type}
+		rc=$?
 
 		if [[ ${rc} != 0 ]]; then
 			read -p $'\e[33mThere seems to be a problem getting the sources, please try again\e[0m' choice
