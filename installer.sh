@@ -231,6 +231,14 @@ checkExistingInstallAndDL() {
 		fi
 		chown -R ${USER} ${USERDIR}/ProjectAlice
 	done
+	
+	
+	if [[ ":$PATH:" == *":$USERDIR/ProjectAlice:"* ]]; then
+  		echo "PATH is correctly set"
+	else
+   		echo "export PATH=\$PATH:$USERDIR/ProjectAlice:" >> ~/.bashrc
+   		echo "PATH has been correctly set"
+	fi
 }
 
 checkAndInstallPython() {
