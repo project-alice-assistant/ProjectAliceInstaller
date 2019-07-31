@@ -233,7 +233,7 @@ checkExistingInstallAndDL() {
 	done
 	
 	
-	if [[ ":${PATH}:" == *":${USERDIR}/ProjectAlice:"* ]]; then
+	if [[ ":$PATH:" == *":${USERDIR}/ProjectAlice:"* ]]; then
   		echo -e "\e[33mPATH is correctly set\e[0m"
 	else
    		echo "export PATH=\$PATH:$USERDIR/ProjectAlice:" >> ~/.bashrc
