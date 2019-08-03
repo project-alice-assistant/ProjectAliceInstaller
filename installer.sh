@@ -175,7 +175,7 @@ checkExistingInstallAndDL() {
 			y|Y)
 				echo -e "\e[32mOk, backing them up!\e[0m"
 				today=`date -u`
-				cp -a ${USERDIR}/ProjectAlice ${USERDIR}/"ProjectAliceBackup"${today}
+				cp -a ${USERDIR}/ProjectAlice ${USERDIR}/"${today}-ProjectAliceBackup"
 				;;
 			*)
 				echo -e "\e[32mGone they are!\e[0m"
@@ -229,9 +229,9 @@ checkExistingInstallAndDL() {
 				cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
 			fi
 		fi
-		chown -R ${USER} ${USERDIR}/ProjectAlice
 	done
-	
+
+	chown -R ${USER} ${USERDIR}/ProjectAlice
 	
 	if [[ ":$PATH:" == *":${USERDIR}/ProjectAlice:"* ]]; then
   		echo -e "\e[33mPATH is correctly set\e[0m"
