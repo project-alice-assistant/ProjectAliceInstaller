@@ -522,23 +522,22 @@ case "$choice" in
 				;;
 		esac
 
-
-    if [[ ${snipsLang} == 'en' ]]; then
-      read -p $'\e[33mMycroft is a nice offline TTS if you want just offline TTS or when you are currently offline. I recommend installing it, the wait is worth the effort (y/n) ? \e[0m' choice
-      case "$choice" in
-        n|N)
-          installMycroft="n"
-          echo -e "\e[31mOk... PicoTTS it is then...\e[0m"
-          ;;
-        *)
-          installMycroft="y"
-          echo -e "\e[32mOk, I will install what's needed\e[0m"
-          if [[ "$ttsService" == "offline" ]]; then
-            ttsService="mycroft"
-          fi
-          ;;
-      esac
-    fi
+		if [[ ${snipsLang} == 'en' ]]; then
+			read -p $'\e[33mMycroft is a nice offline TTS if you want just offline TTS or when you are currently offline. I recommend installing it, the wait is worth the effort (y/n) ? \e[0m' choice
+			case "$choice" in
+				n|N)
+					installMycroft="n"
+					echo -e "\e[31mOk... PicoTTS it is then...\e[0m"
+					;;
+				*)
+					installMycroft="y"
+					echo -e "\e[32mOk, I will install what's needed\e[0m"
+					if [[ "$ttsService" == "offline" ]]; then
+						ttsService="mycroft"
+					fi
+				;;
+			esac
+		fi
 
 		read -p $'\e[33mSamba is needed for some modules. Do you need to configure it? (y/n)? \e[0m' choice
 		case "$choice" in
