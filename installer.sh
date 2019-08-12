@@ -535,7 +535,7 @@ case "$choice" in
 					if [[ "$ttsService" == "offline" ]]; then
 						ttsService="mycroft"
 					fi
-				;;
+					;;
 			esac
 		fi
 
