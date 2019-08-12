@@ -221,7 +221,6 @@ checkExistingInstallAndDL() {
 
 		if [[ ${rc} != 0 ]]; then
 			read -p $'\e[33mThere seems to be a problem getting the sources, please try again\e[0m' choice
-			exit
 		else
 			if [[ ${type} == 'sat' ]]; then
 				cp -rf ${USERDIR}/satellite/ProjectAlice/satellite ${USERDIR}/ProjectAlice
@@ -281,7 +280,6 @@ checkAndInstallPython() {
 		cd ..
 		rm -rf Python-3.7.3
 		rm Python-3.7.3.tar.xz
-		pip3.7 install --upgrade pip
 
 		if [[ -d ${FVENV} ]]; then
 			rm -rf ${FVENV}
@@ -292,12 +290,12 @@ checkAndInstallPython() {
 
 	pythonPath=`which python3.7`
 
+	echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
+	pip3.7 install --upgrade pip
+	pip3.7 install virtualenv
+
 	sudo -u ${USER} bash <<EOF
 		if [[ ! -d ${FVENV} ]]; then
-			echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
-			pip3.7 install --upgrade pip
-			pip3.7 install virtualenv
-
 			virtualenv -p ${pythonPath} ${FVENV}
 			sleep 1s
 			source ${FVENV}/bin/activate
