@@ -745,32 +745,37 @@ case "$choice" in
 		installSLC
 
 		if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
-			sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-			sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-			sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-			sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+			#sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+			#sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+			#sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+			#sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+      pip3 install boto3
 
 			sed -i -e 's/"awsRegion": "eu-central-1"/"awsRegion": "'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/config.py
 			sed -i -e 's/"awsAccessKey": ""/"awsAccessKey": "'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/config.py
 			sed -i -e 's/"awsSecretKey": ""/"awsSecretKey": "'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/config.py
 
-			cd ${USERDIR}
-			curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-			unzip awscli-bundle.zip
-			./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
-			rm awscli-bundle.zip
+			#cd ${USERDIR}
+			#curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+			#unzip awscli-bundle.zip
+			#./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+			#rm awscli-bundle.zip
 		fi
 
 		if [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
-			cd ${USERDIR}
-			export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-			echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-			curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-			apt-get update && sudo apt-get install -y google-cloud-sdk
-			gcloud init
+			#cd ${USERDIR}
+			#export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+			#echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+			#curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+			#apt-get update && sudo apt-get install -y google-cloud-sdk
+			#gcloud init
 
-			mkdir -p /var/empty/.config/gcloud
-			chown _snips /var/empty/.config/gcloud
+			#mkdir -p /var/empty/.config/gcloud
+			#chown _snips /var/empty/.config/gcloud
+
+      sed -i -e 's/"googleWavenetAPIKey": ""/"googleWavenetAPIKey": "'${googleWavenetAPIKey}'"/' ${USERDIR}/ProjectAlice/config.py
+
+			pip install --upgrade google-cloud-texttospeech
 		fi
 
 		echo -e "\e[33mNeed some rest...\e[0m"
