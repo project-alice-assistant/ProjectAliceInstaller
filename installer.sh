@@ -697,15 +697,15 @@ case "$choice" in
 		grep -qF 'i2c-dev' '/etc/modules' || echo 'i2c-dev' | tee --append '/etc/modules'
 		grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --append '/boot/config.txt'
 
-		if [[ "$ttsService" == "pico" ]]; then
-			sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-		elif [[ "$ttsService" == "mycroft" || "$installMycroft" == "y" ]]; then
-			sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-			sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-		elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
-			sed -i -e 's/#googleWavenetAPIKey=%WAVENET_CREDENTIALS/googleWavenetAPIKey="'${googleWavenetAPIKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-		fi
-		sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+		#if [[ "$ttsService" == "pico" ]]; then
+		#	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+		#elif [[ "$ttsService" == "mycroft" || "$installMycroft" == "y" ]]; then
+		#	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+		#	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+		#elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
+		#	sed -i -e 's/#googleWavenetAPIKey=%WAVENET_CREDENTIALS/googleWavenetAPIKey="'${googleWavenetAPIKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
+		#fi
+		#sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 
 		echo -e "\e[33mCatching breath...\e[0m"
 		sleep 2s
