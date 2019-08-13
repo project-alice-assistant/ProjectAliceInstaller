@@ -23,3 +23,7 @@ pyserial
 selenium
 PyGithub
 pydub
+terminaltables
+PyInquirer
+prompt_toolkit==1.0.14
+colorama
