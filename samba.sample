@@ -1,6 +1,13 @@
 #==================== Share Definitions =======================
 [global]
-   ntlm auth=yes
+   #ntlm auth=yes
+	workgroup = WORKGROUP
+	server string = Project Alice SMB %v
+	netbios name = alice
+	security = user
+	map to guest = bad user
+	dns proxy = no
+	allow insecure wide links = yes
 
 [homes]
    comment = Home Directories
@@ -47,12 +54,18 @@
 ;   directory mask = 0700
 
 [share]
-   comment = Project Alice SMB
+	comment = Project Alice SMB
    path = /share
    browseable = yes
-   writeable = Yes
-   only guest = no
+   writeable = yes
+   read only = no
+   force user = pi
+   force group = pi
    create mask = 0777
+   force create mode = 0777
    directory mask = 0777
+   force directory mode = 0777
    public = yes
    guest ok = yes
+   follow symlinks = yes
+   wide links = yes
