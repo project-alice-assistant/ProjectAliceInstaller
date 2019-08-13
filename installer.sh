@@ -750,6 +750,10 @@ case "$choice" in
 			sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 			sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 
+			sed -i -e 's/"awsRegion": "eu-central-1"/"awsRegion": "'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/config.py
+			sed -i -e 's/"awsAccessKey": ""/"awsAccessKey": "'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/config.py
+			sed -i -e 's/"awsSecretKey": ""/"awsSecretKey": "'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/config.py
+
 			cd ${USERDIR}
 			curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
 			unzip awscli-bundle.zip
