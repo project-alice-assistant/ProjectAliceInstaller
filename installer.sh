@@ -634,7 +634,7 @@ case "$choice" in
 			sudo -u ${USER} pactl set-default-source ${input}
 
 			sed -i -e 's/; default-fragments = 4/default-fragments = 5/' /etc/pulse/daemon.conf
-			sed -i -e 's/; default-fragments-size-msec = 25/default-fragments-size-msec = 2/' /etc/pulse/daemon.conf
+			sed -i -e 's/; default-fragment-size-msec = 25/default-fragment-size-msec = 2/' /etc/pulse/daemon.conf
 		fi
 
 		sed -i -e 's/\# assistant = "\/usr\/share\/snips\/assistant"/assistant = "'${escaped}'\/ProjectAlice\/assistant"/' /etc/snips.toml
