@@ -661,10 +661,6 @@ case "$choice" in
 			sed -i -e 's/"asr": "snips"/"asr": "google"/' ${USERDIR}/ProjectAlice/config.py
 		fi
 
-		if [[ -f "$USERDIR/ProjectAlice/credentials/googlecredentials.json" ]]; then
-			sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/credentials\/googlecredentials.json"/' /etc/snips.toml
-		fi
-
 		sed -i -e 's/\# retry_count = 3/retry_count = 0/' /etc/snips.toml
 
 		sed -i -e 's/\# bind = "default@mqtt"/bind = "'${siteId}'@mqtt"/' /etc/snips.toml
