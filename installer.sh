@@ -665,25 +665,7 @@ case "$choice" in
 			sed -i -e 's/\# credentials = "\/usr\/share\/snips\/googlecredentials.json"/credentials = "'${escaped}'\/ProjectAlice\/credentials\/googlecredentials.json"/' /etc/snips.toml
 		fi
 
-		if [[ ! -f "$USERDIR/ProjectAlice/system/scripts/snipsSuperTTS.sh" ]]; then
-			cp ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sample.sh ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-		fi
-
 		sed -i -e 's/\# retry_count = 3/retry_count = 0/' /etc/snips.toml
-
-		if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
-			sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-			sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/system\/scripts\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "amazon", "%%LANG%%", "US", "Joanna", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
-		elif [[ "$ttsService" == "google" ]]; then
-			sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-			sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/system\/scripts\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "google", "%%LANG%%", "US", "Wavenet-C", "FEMALE", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
-		elif [[ "$ttsService" == "mycroft" ]]; then
-			sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-			sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/system\/scripts\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "mycroft", "%%LANG%%", "--", "slt_hts", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
-		else
-			sed -i -e 's/\# provider = "customtts"/provider = "customtts"/' /etc/snips.toml
-			sed -i -e 's/\# customtts = { command = \["pico2wave", "-w", "%%OUTPUT_FILE%%", "-l", "en-US", "%%TEXT%%"\] }/customtts = { command = \["'${escaped}'\/ProjectAlice\/system\/scripts\/snipsSuperTTS.sh", "%%OUTPUT_FILE%%", "picotts", "%%LANG%%", "--", "--", "--", "%%TEXT%%", "22050"\] }/' /etc/snips.toml
-		fi
 
 		sed -i -e 's/\# bind = "default@mqtt"/bind = "'${siteId}'@mqtt"/' /etc/snips.toml
 
@@ -695,16 +677,6 @@ case "$choice" in
 		grep -qF 'dtparam=i2c_arm=on' '/boot/config.txt' || echo 'dtparam=i2c_arm=on' | tee --append '/boot/config.txt'
 		grep -qF 'i2c-dev' '/etc/modules' || echo 'i2c-dev' | tee --append '/etc/modules'
 		grep -qF 'dtparam=spi=on' '/boot/config.txt' || echo 'dtparam=spi=on' | tee --append '/boot/config.txt'
-
-		#if [[ "$ttsService" == "pico" ]]; then
-		#	sed -i -e 's/forceTTSOffline=false/forceTTSOffline=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-		#elif [[ "$ttsService" == "mycroft" || "$installMycroft" == "y" ]]; then
-		#	sed -i -e 's/useMycroft=false/useMycroft=true/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-		#	sed -i -e 's/#mycroftPath=%MYCROFT_PATH/mycroftPath="'${escaped}'\/mimic"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-		#elif [[ "$ttsService" == "google" || "$ttsService" == "both" ]]; then
-		#	sed -i -e 's/#googleWavenetAPIKey=%WAVENET_CREDENTIALS/googleWavenetAPIKey="'${googleWavenetAPIKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-		#fi
-		#sed -i -e 's/cache=%CACHE_PATH%/cache="'${escaped}'\/ProjectAlice\/cache"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 
 		echo -e "\e[33mCatching breath...\e[0m"
 		sleep 2s
@@ -722,7 +694,6 @@ case "$choice" in
 		ln -sfn ${USERDIR}/ProjectAlice/system/sounds/${snipsLang}/error.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/error.wav
 
 		chmod 755 ${USERDIR}/ProjectAlice/system/scripts/langSwitch.sh
-		chmod 755 ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
 		chmod 755 ${USERDIR}/ProjectAlice/system/scripts/switchTTSOnlineState.sh
 
 		if [[ "$installSamba" == "y" ]]; then
@@ -744,10 +715,6 @@ case "$choice" in
 		installSLC
 
 		if [[ "$ttsService" == "amazon" || "$ttsService" == "both" ]]; then
-			#sed -i -e 's/#export AWS_ACCESS_KEY_ID=%AWS_ACCESS_KEY%/export AWS_ACCESS_KEY_ID="'${awsAccessKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-			#sed -i -e 's/#export AWS_SECRET_ACCESS_KEY=%AWS_SECRET_KEY%/export AWS_SECRET_ACCESS_KEY="'${awsSecretKey}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-			#sed -i -e 's/#export AWS_DEFAULT_REGION=%AWS_API_SERVER%/export AWS_DEFAULT_REGION="'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
-			#sed -i -e 's/#awscli=/awscli=/' ${USERDIR}/ProjectAlice/system/scripts/snipsSuperTTS.sh
       pip3 install boto3
 
 			sed -i -e 's/"awsRegion": "eu-central-1"/"awsRegion": "'${awsAPIGateway}'"/' ${USERDIR}/ProjectAlice/config.py
