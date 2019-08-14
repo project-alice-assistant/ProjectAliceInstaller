@@ -338,7 +338,7 @@ installSnips() {
 	apt-get update
 
 	if [[ ${type} == 'main' ]]; then
-		apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch
+		apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch snips-makers-tts
 		systemctl stop snips-*
 		systemctl disable snips-asr
 		systemctl disable snips-nlu
@@ -346,6 +346,7 @@ installSnips() {
 		systemctl disable snips-injection
 		systemctl disable snips-hotword
 		systemctl disable snips-audio-server
+		systemctl disable snips-makers-tts
 	else
 		apt-get install -y --allow-unauthenticated snips-hotword-model-heysnipsv4 snips-satellite
 		systemctl stop snips-*
