@@ -647,7 +647,11 @@ case "$choice" in
 		sed -i -e 's/"activeLanguage": "en"/"activeLanguage": "'${snipsLang}'"/' ${USERDIR}/ProjectAlice/config.py
 		sed -i -e 's/"snipsConsoleLogin": ""/"snipsConsoleLogin": "'${snipsLogin}'"/' ${USERDIR}/ProjectAlice/config.py
 
-		sed -i -e 's/"tts": "pico"/"tts": "'${ttsService}'"/' ${USERDIR}/ProjectAlice/config.py
+    if [[ ${ttsService} == 'both' ]]; then
+		  sed -i -e 's/"tts": "pico"/"tts": "amazon"/' ${USERDIR}/ProjectAlice/config.py
+		else
+		  sed -i -e 's/"tts": "pico"/"tts": "'${ttsService}'"/' ${USERDIR}/ProjectAlice/config.py
+		fi
 
 		snipsPasswordEsc=$(sed 's/[\*\.&]/\\&/g' <<< ${snipsPassword})
 		sed -i -e 's/"snipsConsolePassword": ""/"snipsConsolePassword": "'${snipsPasswordEsc}'"/' ${USERDIR}/ProjectAlice/config.py
