@@ -740,7 +740,7 @@ case "$choice" in
 			#mkdir -p /var/empty/.config/gcloud
 			#chown _snips /var/empty/.config/gcloud
 
-			pip install --upgrade google-cloud-texttospeech
+			pip3 install --upgrade google-cloud-texttospeech
 		fi
 
 		echo -e "\e[33mNeed some rest...\e[0m"
