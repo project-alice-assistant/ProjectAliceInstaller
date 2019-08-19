@@ -95,6 +95,7 @@ fi
 USER=$(logname)
 USERDIR='/home/'${USER}
 escaped=${USERDIR//\//\\/}
+REPO_URL='https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git'
 
 systemctl is-active -q ProjectAlice && systemctl stop ProjectAlice
 
@@ -138,10 +139,9 @@ checkAndUpdateSources() {
 				rc=$?
 				git stash apply
 			else
-				cloneUrl="https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git"
 				git init ${USERDIR}/satellite
 				cd ${USERDIR}/satellite
-				git remote add origin ${cloneUrl}
+				git remote add origin ${REPO_URL}
 				git config core.sparsecheckout true
 				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
 				git pull --depth=1 origin master
@@ -149,17 +149,31 @@ checkAndUpdateSources() {
 			fi
 		fi
 	else
-		if [[ -d ${USERDIR}/project-alice ]]; then
-			cd ${USERDIR}/project-alice
-			git stash
-			git pull
-			rc=$?
-			git stash apply
-		else
-			cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
-			git clone --depth=1 ${cloneUrl}
-			rc=$?
-		fi
+	  if [[ -d ${USERDIR}/ProjectAlice ]]; then
+	    cd ${USERDIR}/ProjectAlice
+	    if [[ -d ${USERDIR}/ProjectAlice/.git ]]; then
+  			git stash
+	  		git pull
+		  	rc=$?
+			  git stash apply
+			else
+			  git init
+			  git remote add origin ${REPO_URL}
+			  git pull
+			  rc=$?
+	    fi
+	  fi
+#		if [[ -d ${USERDIR}/project-alice ]]; then
+#			cd ${USERDIR}/project-alice
+#			git stash
+#			git pull
+#			rc=$?
+#			git stash apply
+#		else
+#			cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
+#			git clone --depth=1 ${cloneUrl}
+#			rc=$?
+#		fi
 	fi
 
 	return ${rc}
