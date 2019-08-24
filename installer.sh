@@ -700,8 +700,8 @@ case "$choice" in
 		mkdir -m 1777 /share
 
 		chown -R ${USER} ${USERDIR}/ProjectAlice
-		chown -R _snips ${USERDIR}/ProjectAlice/cache
-		chmod 775 ${USERDIR}/ProjectAlice/cache
+		chown -R _snips ${USERDIR}/ProjectAlice/var/cache
+		chmod 775 ${USERDIR}/ProjectAlice/var/cache
 
 		ln -sfn ${USERDIR}/ProjectAlice/trained/assistants/assistant_${snipsLang} ${USERDIR}/ProjectAlice/assistant
 		ln -sfn ${USERDIR}/ProjectAlice/system/sounds/${snipsLang}/start_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/start_of_input.wav

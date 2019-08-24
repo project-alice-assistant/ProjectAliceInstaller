@@ -3,7 +3,6 @@ django
 pyalsaaudio
 pyaudio
 python-dateutil
-soco
 paho-mqtt
 watchdog
 toml
@@ -11,17 +10,13 @@ requests==2.21.0
 requests-jwt
 spidev
 gpiozero
-Adafruit_MCP9808
-py-translate
 langdetect
 slugify
 google-api-python-client
 oauth2client
-SpeechRecognition
 esptool
 pyserial
 selenium
-PyGithub
 pydub
 terminaltables
 PyInquirer
