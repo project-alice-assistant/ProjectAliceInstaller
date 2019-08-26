@@ -95,7 +95,6 @@ fi
 USER=$(logname)
 USERDIR='/home/'${USER}
 escaped=${USERDIR//\//\\/}
-REPO_URL='https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git'
 
 systemctl is-active -q ProjectAlice && systemctl stop ProjectAlice
 
@@ -141,7 +140,7 @@ checkAndUpdateSources() {
 			else
 				git init ${USERDIR}/satellite
 				cd ${USERDIR}/satellite
-				git remote add origin ${REPO_URL}
+				git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git
 				git config core.sparsecheckout true
 				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
 				git pull --depth=1 origin master
@@ -158,7 +157,7 @@ checkAndUpdateSources() {
 			  git stash apply
 			else
 			  git init
-			  git remote add origin ${REPO_URL}
+			  git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAlice.git
 			  git pull
 			  rc=$?
 	    fi
