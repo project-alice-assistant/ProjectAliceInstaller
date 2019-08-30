@@ -162,17 +162,6 @@ checkAndUpdateSources() {
 			  rc=$?
 	    fi
 	  fi
-#		if [[ -d ${USERDIR}/project-alice ]]; then
-#			cd ${USERDIR}/project-alice
-#			git stash
-#			git pull
-#			rc=$?
-#			git stash apply
-#		else
-#			cloneUrl="https://bitbucket.org/Psychokiller1888/project-alice.git"
-#			git clone --depth=1 ${cloneUrl}
-#			rc=$?
-#		fi
 	fi
 
 	return ${rc}
@@ -194,6 +183,7 @@ checkExistingInstallAndDL() {
 				echo -e "\e[32mGone they are!\e[0m"
 				;;
 		esac
+		cp ${USERDIR}/ProjectAlice/config.py ${USERDIR}/config.bkp
 		read -p $'\e[33mDo you want to (u)pdate or to (i)nstall from scratch? \e[0m' choice
 		case ${choice} in
 			i|I)
@@ -211,16 +201,13 @@ checkExistingInstallAndDL() {
 					exit
 				fi
 
-				cp ${USERDIR}/ProjectAlice/config.py ${USERDIR}/ProjectAlice/config.bkp
-
 				if [[ ${type} == 'sat' ]]; then
-					cp -rf ${USERDIR}/satellite/ProjectAlice/satellite ${USERDIR}/ProjectAlice
+					cp -rf ${USERDIR}/satellite/ProjectAliceDevices/satellite ${USERDIR}/ProjectAlice
 				else
-					cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
+					mv ${USERDIR}/config.bkp ${USERDIR}/ProjectAlice/config.py
 				fi
 
 				chown -R ${USER} ${USERDIR}/ProjectAlice
-				cp ${USERDIR}/ProjectAlice/config.bkp ${USERDIR}/ProjectAlice/config.py
 				echo
 				read -p $'\e[33mI have updated your installation to the latest sources available. Press a key to exit \e[0m' choice
 				exit;;
@@ -236,9 +223,7 @@ checkExistingInstallAndDL() {
 			read -p $'\e[33mThere seems to be a problem getting the sources, please try again\e[0m' choice
 		else
 			if [[ ${type} == 'sat' ]]; then
-				cp -rf ${USERDIR}/satellite/ProjectAlice/satellite ${USERDIR}/ProjectAlice
-			else
-				cp -rf ${USERDIR}/project-alice/alice ${USERDIR}/ProjectAlice
+				cp -rf ${USERDIR}/satellite/ProjectAliceDevices/satellite ${USERDIR}/ProjectAlice
 			fi
 		fi
 	done
