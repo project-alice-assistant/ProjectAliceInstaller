@@ -336,7 +336,7 @@ installSnips() {
 	apt-get update
 
 	if [[ ${type} == 'main' ]]; then
-		apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch snips-makers-tts
+		apt-get install -y --allow-unauthenticated snips-platform-voice snips-watch snips-makers-tts snips-hotword-model-heysnipsv4
 		systemctl stop snips-*
 		systemctl disable snips-asr
 		systemctl disable snips-nlu
