@@ -688,8 +688,8 @@ case "$choice" in
 		chmod 775 ${USERDIR}/ProjectAlice/var/cache
 
 		rm -rf ${USERDIR}/ProjectAlice/assistant/
+		mkdir -p ${USERDIR}/ProjectAlice/trained/assistants/assistant_${snipsLang}/custom_dialogue/sound
 		ln -sfn ${USERDIR}/ProjectAlice/trained/assistants/assistant_${snipsLang} ${USERDIR}/ProjectAlice/assistant
-		mkdir -p -m 1777 ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound
 		ln -sfn ${USERDIR}/ProjectAlice/system/sounds/${snipsLang}/start_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/start_of_input.wav
 		ln -sfn ${USERDIR}/ProjectAlice/system/sounds/${snipsLang}/end_of_input.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/end_of_input.wav
 		ln -sfn ${USERDIR}/ProjectAlice/system/sounds/${snipsLang}/error.wav ${USERDIR}/ProjectAlice/assistant/custom_dialogue/sound/error.wav
