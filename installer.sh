@@ -268,9 +268,9 @@ checkAndInstallPython() {
 		echo -e "\e[33mInstalling Python 3.7... This will take a while...\e[0m"
 		apt install -y libffi-dev libbz2-dev liblzma-dev libsqlite3-dev libncurses5-dev libgdbm-dev zlib1g-dev libreadline-dev libssl-dev tk-dev build-essential libncursesw5-dev libc6-dev openssl
 		cd ${USERDIR}
-		sudo -u ${USER} wget https://www.python.org/ftp/python/3.7.3/Python-3.7.3.tar.xz
-		sudo -u ${USER} tar xf Python-3.7.3.tar.xz
-		cd Python-3.7.3
+		sudo -u ${USER} wget https://www.python.org/ftp/python/3.7.3/Python-3.7.4.tar.xz
+		sudo -u ${USER} tar xf Python-3.7.4.tar.xz
+		cd Python-3.7.4
 		./configure
 		cores=$(nproc)
 		make -j -l ${cores}
