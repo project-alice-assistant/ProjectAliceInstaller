@@ -276,8 +276,8 @@ checkAndInstallPython() {
 		make -j -l ${cores}
 		make altinstall
 		cd ..
-		rm -rf Python-3.7.3
-		rm Python-3.7.3.tar.xz
+		rm -rf Python-3.7.4
+		rm Python-3.7.4.tar.xz
 
 		if [[ -d ${FVENV} ]]; then
 			rm -rf ${FVENV}
