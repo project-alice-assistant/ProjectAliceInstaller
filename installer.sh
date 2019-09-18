@@ -128,13 +128,13 @@ checkAndUpdateSources() {
 		if [[ -d ${USERDIR}/satellite ]]; then
 			cd ${USERDIR}/satellite
 			git stash
-			git pull --depth=1 origin master
+			git pull origin master
 			git stash apply
 		else
 			if [[ -d ${USERDIR}/satellite ]]; then
 				cd ${USERDIR}/satellite
 				git stash
-				git pull --depth=1 origin master
+				git pull origin master
 				rc=$?
 				git stash apply
 			else
@@ -143,7 +143,7 @@ checkAndUpdateSources() {
 				git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git
 				git config core.sparsecheckout true
 				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
-				git pull --depth=1 origin master
+				git pull origin master
 				rc=$?
 			fi
 		fi
