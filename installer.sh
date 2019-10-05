@@ -321,9 +321,18 @@ moveServiceFile() {
 
 installSnips() {
 	type=$1
-	bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list'
-	sed -i -e 's/snips.ai\/buster/snips.ai\/stretch/' /etc/apt/sources.list.d/snips.list
-	apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
+	case $(uname -m) in
+	"x86_64")
+		# this works for stretch and bionic, and according to the armhf code below also for buster.
+		echo "deb https://debian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list
+		apt-key adv --keyserver gpg.mozilla.org --recv-keys F727C778CCB0A455
+		;;
+	"armhf")
+		echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list
+		sed -i -e 's/snips.ai\/buster/snips.ai\/stretch/' /etc/apt/sources.list.d/snips.list
+		apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
+		;;
+	esac
 	apt-get update
 
 	if [[ ${type} == 'main' ]]; then
