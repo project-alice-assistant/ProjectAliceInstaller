@@ -170,7 +170,7 @@ checkAndUpdateSources() {
 
 checkExistingInstallAndDL() {
 	type=$1
-	if [[ -d ${USERDIR/ProjectAlice} ]]; then
+	if [[ -d ${USERDIR}/ProjectAlice ]]; then
 		echo
 		read -p $'\e[33mI have found existing directories where I should install. Shall I make a backup (y/n)? \e[0m' choice
 		case ${choice} in
