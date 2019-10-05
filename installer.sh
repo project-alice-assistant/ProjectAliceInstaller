@@ -232,6 +232,9 @@ checkExistingInstallAndDL() {
 checkAndInstallPython() {
 	type=$1
 
+	#todo https://www.itsupportwale.com/blog/how-to-upgrade-to-python-3-7-on-ubuntu-18-10/
+	# works for bionic (18.04) too
+
 	FVENV=${USERDIR}'/ProjectAlice/'${VENV}
 
 	installPython='n'
@@ -280,8 +283,8 @@ checkAndInstallPython() {
 	pythonPath=`which python3.7`
 
 	echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
-	pip3.7 install --upgrade pip
-	pip3.7 install virtualenv
+	pip3 install --upgrade pip
+	pip3 install virtualenv
 
 	sudo -u ${USER} bash <<EOF
 		if [[ ! -d ${FVENV} ]]; then
