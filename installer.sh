@@ -125,43 +125,34 @@ checkAndUpdateSources() {
 	type=$1
 
 	if [[ ${type} == 'sat' ]]; then
-		if [[ -d ${USERDIR}/satellite ]]; then
-			cd ${USERDIR}/satellite
+		mkdir -p ${USERDIR}/satellite
+		cd ${USERDIR}/satellite
+
+		if [[ -d ${USERDIR}/satellite/.git ]]; then
 			git stash
 			git pull origin master
+			rc=$?
 			git stash apply
 		else
-			if [[ -d ${USERDIR}/satellite ]]; then
-				cd ${USERDIR}/satellite
-				git stash
-				git pull origin master
-				rc=$?
-				git stash apply
-			else
-				git init ${USERDIR}/satellite
-				cd ${USERDIR}/satellite
-				git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git
-				git config core.sparsecheckout true
-				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
-				git pull origin master
-				rc=$?
-			fi
+			git init
+			git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git
+			git config core.sparsecheckout true
+			echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
+			git pull origin master
+			rc=$?
 		fi
 	else
-	  if [[ -d ${USERDIR}/ProjectAlice ]]; then
-	    cd ${USERDIR}/ProjectAlice
-	    if [[ -d ${USERDIR}/ProjectAlice/.git ]]; then
-  			git stash
+		if [[ -d ${USERDIR}/ProjectAlice/.git ]]; then
+			cd ${USERDIR}/ProjectAlice
+			git stash
 	  		git pull
 		  	rc=$?
-			  git stash apply
-			else
-			  git init
-			  git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAlice.git
-			  git pull
-			  rc=$?
-	    fi
-	  fi
+			git stash apply
+		else
+			cd ${USERDIR}
+			git clone https://github.com/project-alice-powered-by-snips/ProjectAlice.git
+			rc=$?
+		fi
 	fi
 
 	return ${rc}
