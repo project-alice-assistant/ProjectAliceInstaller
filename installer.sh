@@ -252,7 +252,7 @@ checkAndInstallPython() {
 					echo -e "\e[31mno\e[0m"
 					;;
 			esac
-			chown -R pi ${FVENV}
+			chown -R ${USER} ${FVENV}
 		else
 			installPython='y'
 		fi
