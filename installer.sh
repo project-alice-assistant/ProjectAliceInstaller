@@ -125,43 +125,34 @@ checkAndUpdateSources() {
 	type=$1
 
 	if [[ ${type} == 'sat' ]]; then
-		if [[ -d ${USERDIR}/satellite ]]; then
-			cd ${USERDIR}/satellite
+		mkdir -p ${USERDIR}/satellite
+		cd ${USERDIR}/satellite
+
+		if [[ -d ${USERDIR}/satellite/.git ]]; then
 			git stash
 			git pull origin master
+			rc=$?
 			git stash apply
 		else
-			if [[ -d ${USERDIR}/satellite ]]; then
-				cd ${USERDIR}/satellite
-				git stash
-				git pull origin master
-				rc=$?
-				git stash apply
-			else
-				git init ${USERDIR}/satellite
-				cd ${USERDIR}/satellite
-				git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git
-				git config core.sparsecheckout true
-				echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
-				git pull origin master
-				rc=$?
-			fi
+			git init
+			git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAliceDevices.git
+			git config core.sparsecheckout true
+			echo "ProjectAlice/satellite/*" >> .git/info/sparse-checkout
+			git pull origin master
+			rc=$?
 		fi
 	else
-	  if [[ -d ${USERDIR}/ProjectAlice ]]; then
-	    cd ${USERDIR}/ProjectAlice
-	    if [[ -d ${USERDIR}/ProjectAlice/.git ]]; then
-  			git stash
+		if [[ -d ${USERDIR}/ProjectAlice/.git ]]; then
+			cd ${USERDIR}/ProjectAlice
+			git stash
 	  		git pull
 		  	rc=$?
-			  git stash apply
-			else
-			  git init
-			  git remote add origin https://github.com/project-alice-powered-by-snips/ProjectAlice.git
-			  git pull
-			  rc=$?
-	    fi
-	  fi
+			git stash apply
+		else
+			cd ${USERDIR}
+			git clone https://github.com/project-alice-powered-by-snips/ProjectAlice.git
+			rc=$?
+		fi
 	fi
 
 	return ${rc}
@@ -241,6 +232,9 @@ checkExistingInstallAndDL() {
 checkAndInstallPython() {
 	type=$1
 
+	#todo https://www.itsupportwale.com/blog/how-to-upgrade-to-python-3-7-on-ubuntu-18-10/
+	# works for bionic (18.04) too
+
 	FVENV=${USERDIR}'/ProjectAlice/'${VENV}
 
 	installPython='n'
@@ -258,7 +252,7 @@ checkAndInstallPython() {
 					echo -e "\e[31mno\e[0m"
 					;;
 			esac
-			chown -R pi ${FVENV}
+			chown -R ${USER} ${FVENV}
 		else
 			installPython='y'
 		fi
@@ -289,8 +283,8 @@ checkAndInstallPython() {
 	pythonPath=`which python3.7`
 
 	echo -e "\e[33mInstalling Python 3.7 virtual environment\e[0m"
-	pip3.7 install --upgrade pip
-	pip3.7 install virtualenv
+	pip3 install --upgrade pip
+	pip3 install virtualenv
 
 	sudo -u ${USER} bash <<EOF
 		if [[ ! -d ${FVENV} ]]; then
@@ -330,9 +324,18 @@ moveServiceFile() {
 
 installSnips() {
 	type=$1
-	bash -c  'echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list'
-	sed -i -e 's/snips.ai\/buster/snips.ai\/stretch/' /etc/apt/sources.list.d/snips.list
-	apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
+	case $(uname -m) in
+	"x86_64")
+		# this works for stretch and bionic, and according to the armhf code below also for buster.
+		echo "deb https://debian.snips.ai/stretch stable main" > /etc/apt/sources.list.d/snips.list
+		apt-key adv --keyserver gpg.mozilla.org --recv-keys F727C778CCB0A455
+		;;
+	"armhf")
+		echo "deb https://raspbian.snips.ai/$(lsb_release -cs) stable main" > /etc/apt/sources.list.d/snips.list
+		sed -i -e 's/snips.ai\/buster/snips.ai\/stretch/' /etc/apt/sources.list.d/snips.list
+		apt-key adv --keyserver gpg.mozilla.org --recv-keys D4F50CDCA10A2849
+		;;
+	esac
 	apt-get update
 
 	if [[ ${type} == 'main' ]]; then
