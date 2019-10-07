@@ -773,12 +773,9 @@ systemctl enable ProjectAlice
 
 clear
 
-echo -e "\e[100;33m===============================================\e[0m"
-echo -e "\e[100;33m           Project Alice installed             \e[0m"
-echo -e "\e[100;33m        Please press enter to reboot           \e[0m"
-echo -e "\e[100;33m===============================================\e[0m"
+echo -e "\e[100;33m=====================================================\e[0m"
+echo -e "\e[100;33m               Project Alice installed               \e[0m"
+echo -e "\e[100;33m                  Please reboot now                  \e[0m"
+echo -e "\e[100;33m (or suffer the consequences of a non working Alice) \e[0m"
+echo -e "\e[100;33m=====================================================\e[0m"
 
-read -p ""
-clear
-sleep 1
-reboot -f
