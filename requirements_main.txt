@@ -6,7 +6,7 @@ python-dateutil
 paho-mqtt
 watchdog
 toml
-requests==2.21.0
+requests==2.31.0
 requests-jwt
 spidev
 gpiozero
